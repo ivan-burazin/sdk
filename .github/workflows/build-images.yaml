@@ -1,0 +1,46 @@
+name: '[release] Build language images'
+
+on:
+  repository_dispatch:
+    types: [update-version, new-release]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Enter the version to release'
+        required: true
+
+concurrency:
+  # New commit on branch cancels running workflows of the same branch
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  VERSION: ${{ inputs.version || github.event.client_payload.release_tag }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        language: [typescript, python]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: hack/workspace-images/${{ matrix.language}}
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: daytonaio/sdk-${{ matrix.language }}:${{ env.VERSION }}
+          build-args: |
+            "DAYTONA_VERSION=${{ env.VERSION }}"

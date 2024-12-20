@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "docs": "mkdir -p ../../docs/python-sdk && npm run docs:daytona && npm run docs:workspace && npm run docs:filesystem && npm run docs:git && npm run docs:process && npm run docs:lsp",
+    "docs:daytona": "pydoc-markdown -I $(pwd)/src config/pydoc/pydoc-daytona.yml > ../../docs/python-sdk/daytona.md",
+    "docs:workspace": "pydoc-markdown -I $(pwd)/src config/pydoc/pydoc-workspace.yml > ../../docs/python-sdk/workspace.md",
+    "docs:filesystem": "pydoc-markdown -I $(pwd)/src config/pydoc/pydoc-filesystem.yml > ../../docs/python-sdk/filesystem.md",
+    "docs:git": "pydoc-markdown -I $(pwd)/src config/pydoc/pydoc-git.yml > ../../docs/python-sdk/git.md",
+    "docs:process": "pydoc-markdown -I $(pwd)/src config/pydoc/pydoc-process.yml > ../../docs/python-sdk/process.md",
+    "docs:lsp": "pydoc-markdown -I $(pwd)/src config/pydoc/pydoc-lsp.yml > ../../docs/python-sdk/lsp.md"
+  }
+} 

@@ -48,10 +48,12 @@ class CreateWorkspaceParams:
         id: Optional workspace ID. If not provided, a random ID will be generated
         image: Optional Docker image to use for the workspace
         language: Programming language to use in the workspace
+        os_user: Optional OS user for the workspace image
     """
     language: CodeLanguage
     id: Optional[str] = None
     image: Optional[str] = None
+    os_user: Optional[str] = None
 
 
 class Daytona:
@@ -123,6 +125,11 @@ class Daytona:
                     if params and params.image
                     else code_toolbox.get_default_image()
                 ),
+                "osUser": (
+                    params.os_user if params and params.os_user
+                    else "daytona" if not params.image and code_toolbox.get_default_image()
+                    else "root"
+                ),
                 "env_vars": {"DAYTONA_SKIP_CLONE": "true"},
                 "source": {
                     "repository": {
@@ -179,21 +186,21 @@ class Daytona:
         """
         return self.workspace_api.remove_workspace(workspace_id=workspace.id)
 
-    def get_current_workspace(self) -> Workspace:
+    def get_current_workspace(self, workspace_id: str) -> Workspace:
         """
-        Get the current workspace based on environment variables.
+        Get a workspace by its ID.
+
+        Args:
+            workspace_id: The ID of the workspace to retrieve
 
         Returns:
-            Workspace: The current workspace instance
+            Workspace: The workspace instance
 
         Raises:
-            ValueError: If DAYTONA_WORKSPACE_ID is not set in environment
+            ValueError: If workspace_id is not provided
         """
-        env = Env()
-        workspace_id = env.str("DAYTONA_WORKSPACE_ID")
-
         if not workspace_id:
-            raise ValueError("DAYTONA_WORKSPACE_ID environment variable is required")
+            raise ValueError("workspace_id is required")
 
         # Get the workspace instance
         workspace_instance = self.workspace_api.get_workspace(workspace_id=workspace_id)

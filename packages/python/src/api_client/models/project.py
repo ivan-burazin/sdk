@@ -22,6 +22,7 @@ from typing import Any, ClassVar, Dict, List, Optional
 from api_client.models.build_config import BuildConfig
 from api_client.models.git_repository import GitRepository
 from api_client.models.project_state import ProjectState
+from api_client.models.project_info import ProjectInfo
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -42,6 +43,7 @@ class Project(BaseModel):
     state: Optional[ProjectState] = None
     target: StrictStr
     user: StrictStr
+    info: Optional[ProjectInfo] = None,
     workspace_id: StrictStr = Field(alias="workspaceId")
     __properties: ClassVar[List[str]] = [
         "buildConfig",
@@ -53,6 +55,7 @@ class Project(BaseModel):
         "state",
         "target",
         "user",
+        "info",
         "workspaceId",
     ]
 
@@ -102,6 +105,9 @@ class Project(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of state
         if self.state:
             _dict["state"] = self.state.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of state
+        if self.info:
+            _dict["info"] = self.info.to_dict()
         return _dict
 
     @classmethod
@@ -132,6 +138,11 @@ class Project(BaseModel):
                 "state": (
                     ProjectState.from_dict(obj["state"])
                     if obj.get("state") is not None
+                    else None
+                ),
+                "info": (
+                    ProjectInfo.from_dict(obj["info"])
+                    if obj.get("info") is not None
                     else None
                 ),
                 "target": obj.get("target"),

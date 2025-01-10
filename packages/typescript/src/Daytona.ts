@@ -41,6 +41,8 @@ export type CreateWorkspaceParams = {
   image?: string
   /** Programming language to use in the workspace */
   language: CodeLanguage
+  /** Optional environment variables to set in the workspace */
+  envVars?: Record<string, string>
 }
 
 /**
@@ -117,9 +119,7 @@ export class Daytona {
       {
         name: 'main',
         image: params?.image || codeToolbox.getDefaultImage(),
-        envVars: {
-          DAYTONA_SKIP_CLONE: 'true',
-        },
+        envVars: params?.envVars || {},
         source: {
           //  todo: remove when repo is not required
           repository: {

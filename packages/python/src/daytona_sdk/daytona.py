@@ -6,6 +6,7 @@ This module provides the main entry point for interacting with Daytona Server AP
 
 import os
 import uuid
+import json
 from typing import Optional, Literal, Dict, Any
 from dataclasses import dataclass
 from environs import Env
@@ -54,6 +55,8 @@ class CreateWorkspaceParams:
     id: Optional[str] = None
     image: Optional[str] = None
     os_user: Optional[str] = None
+    env_vars: Optional[Dict[str, str]] = None
+    # labels: Optional[Dict[str, str]] = None
 
 
 class Daytona:
@@ -100,20 +103,16 @@ class Daytona:
         self.toolbox_api = WorkspaceToolboxApi(api_client)
 
     def create(self, params: Optional[CreateWorkspaceParams] = None) -> Workspace:
-        """Creates a new workspace.
+        """Creates a new workspace and waits for it to start.
         
         Args:
-            params: Parameters for workspace creation
+            params: Optional parameters for workspace creation. If not provided, 
+                   defaults to Python language.
             
         Returns:
             The created workspace instance
-            
-        Raises:
-            ValueError: When an unsupported language is specified
         """
-        workspace_id = (
-            params.id if params and params.id else f"sandbox-{str(uuid.uuid4())[:8]}"
-        )
+        workspace_id = f"sandbox-{str(uuid.uuid4())[:8]}"
         code_toolbox = self._get_code_toolbox(params)
 
         try:
@@ -121,16 +120,15 @@ class Daytona:
             project = {
                 "name": "main",
                 "image": (
-                    params.image
-                    if params and params.image
+                    params.image if params and params.image 
                     else code_toolbox.get_default_image()
                 ),
                 "osUser": (
                     params.os_user if params and params.os_user
-                    else "daytona" if not params.image and code_toolbox.get_default_image()
+                    else "daytona" if code_toolbox.get_default_image() 
                     else "root"
                 ),
-                "env_vars": {"DAYTONA_SKIP_CLONE": "true"},
+                "env_vars": params.env_vars if params and params.env_vars else {},
                 "source": {
                     "repository": {
                         "branch": "main",
@@ -156,7 +154,30 @@ class Daytona:
             }
 
             response = self.workspace_api.create_workspace(workspace=workspace_data)
-            return Workspace(workspace_id, response, self.toolbox_api, code_toolbox)
+            workspace = Workspace(workspace_id, response, self.toolbox_api, code_toolbox)
+
+            # Wait for workspace to start
+            try:
+                if not workspace.instance.projects[0].info.provider_metadata:
+                    raise Exception("Provider metadata is missing")
+                
+                provider_metadata = json.loads(workspace.instance.projects[0].info.provider_metadata)
+                current_state = provider_metadata.get('state')
+                while current_state in ["pulling_image", "creating"]:
+                    time.sleep(1)
+                    workspace_check = self.workspace_api.get_workspace(workspace_id=workspace.id)
+                    if not workspace_check.projects[0].info.provider_metadata:
+                        raise Exception("Provider metadata is missing during status check")
+                    provider_metadata = json.loads(workspace_check.projects[0].info.provider_metadata)
+                    current_state = provider_metadata.get('state')
+                    
+                if current_state != "started":
+                    raise Exception(f"Workspace failed to start. Current state: {current_state}")
+            finally:
+                # If not Daytona SaaS, we don't need to handle pulling image state
+                pass
+
+            return workspace
 
         except Exception as e:
             try:
@@ -166,7 +187,14 @@ class Daytona:
             raise Exception(f"Failed to create workspace: {str(e)}") from e
 
     def _get_code_toolbox(self, params: Optional[CreateWorkspaceParams] = None):
-        """Helper method to get the appropriate code toolbox"""
+        """Helper method to get the appropriate code toolbox
+        
+        Args:
+            params: Optional workspace parameters. If not provided, defaults to Python toolbox.
+            
+        Returns:
+            The appropriate code toolbox instance
+        """
         if not params:
             return WorkspacePythonCodeToolbox()
 

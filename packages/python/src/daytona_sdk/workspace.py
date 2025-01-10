@@ -6,6 +6,9 @@ Git, process execution, and LSP functionality.
 """
 
 import asyncio
+import json
+import urllib.request
+from typing import Dict
 from .filesystem import FileSystem
 from .git import Git
 from .process import Process
@@ -73,3 +76,38 @@ class Workspace:
             A new LSP server instance
         """
         return LspServer(language_id, path_to_project, self.toolbox_api, self.instance)
+
+    def set_labels(self, labels: Dict[str, str]) -> Dict[str, str]:
+        """Sets labels for the workspace.
+        
+        Args:
+            labels: Dictionary of key-value pairs representing workspace labels
+            
+        Returns:
+            Dictionary containing the updated workspace labels
+            
+        Raises:
+            urllib.error.HTTPError: If the server request fails
+            urllib.error.URLError: If there's a network/connection error
+        """
+        url = f"{self.toolbox_api.api_client.configuration.host}/workspace/{self.id}/labels"
+        
+        # Prepare the request
+        data = json.dumps({"labels": labels}).encode('utf-8')
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': self.toolbox_api.api_client.default_headers["Authorization"]
+        }
+        
+        # Create request object
+        request = urllib.request.Request(
+            url,
+            data=data,
+            headers=headers,
+            method='PUT'
+        )
+        
+        # Send request and get response
+        with urllib.request.urlopen(request) as response:
+            response_data = json.loads(response.read().decode('utf-8'))
+            return response_data.get('labels', {})

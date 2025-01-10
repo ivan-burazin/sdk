@@ -34,6 +34,7 @@ import {
   ProjectStateToJSON,
   ProjectStateToJSONTyped,
 } from './ProjectState'
+import { ProjectInfo, ProjectInfoFromJSON, ProjectInfoToJSON } from './ProjectInfo'
 
 /**
  *
@@ -83,6 +84,12 @@ export interface Project {
    * @memberof Project
    */
   state?: ProjectState
+  /**
+   *
+   * @type {ProjectInfo}
+   * @memberof Project
+   */
+  info?: ProjectInfo
   /**
    *
    * @type {string}
@@ -145,6 +152,8 @@ export function ProjectFromJSONTyped(
     repository: GitRepositoryFromJSON(json['repository']),
     state:
       json['state'] == null ? undefined : ProjectStateFromJSON(json['state']),
+    info:
+      json['info'] == null ? undefined : ProjectInfoFromJSON(json['info']),
     target: json['target'],
     user: json['user'],
     workspaceId: json['workspaceId'],
@@ -171,6 +180,7 @@ export function ProjectToJSONTyped(
     name: value['name'],
     repository: GitRepositoryToJSON(value['repository']),
     state: ProjectStateToJSON(value['state']),
+    info: ProjectInfoToJSON(value['info']),
     target: value['target'],
     user: value['user'],
     workspaceId: value['workspaceId'],

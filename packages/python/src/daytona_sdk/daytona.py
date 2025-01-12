@@ -112,7 +112,11 @@ class Daytona:
         Returns:
             The created workspace instance
         """
-        workspace_id = f"sandbox-{str(uuid.uuid4())[:8]}"
+        if params.id:
+            workspace_id = params.id
+        else:
+            workspace_id = f"sandbox-{str(uuid.uuid4())[:8]}"
+
         code_toolbox = self._get_code_toolbox(params)
 
         try:

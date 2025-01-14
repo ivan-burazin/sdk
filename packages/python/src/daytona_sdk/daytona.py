@@ -167,7 +167,7 @@ class Daytona:
                 
                 provider_metadata = json.loads(workspace.instance.projects[0].info.provider_metadata)
                 current_state = provider_metadata.get('state')
-                while current_state in ["pulling_image", "creating"]:
+                while current_state in ["unknown", "pulling_image", "creating"]:
                     time.sleep(1)
                     workspace_check = self.workspace_api.get_workspace(workspace_id=workspace.id)
                     if not workspace_check.projects[0].info.provider_metadata:
@@ -180,6 +180,10 @@ class Daytona:
             finally:
                 # If not Daytona SaaS, we don't need to handle pulling image state
                 pass
+
+            # Wait for workspace agent to be ready
+            # TODO: remove
+            time.sleep(3)
 
             return workspace
 

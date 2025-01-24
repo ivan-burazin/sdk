@@ -102,6 +102,58 @@ class Daytona:
         self.workspace_api = WorkspaceApi(api_client)
         self.toolbox_api = WorkspaceToolboxApi(api_client)
 
+    def _wait_for_workspace_start(self, workspace_id: str) -> None:
+        """Wait for workspace to reach 'started' state.
+        
+        Args:
+            workspace_id: The ID of the workspace to check
+            
+        Raises:
+            Exception: If workspace fails to start or metadata is missing
+        """
+        workspace_check = self.workspace_api.get_workspace(workspace_id=workspace_id)
+        if not workspace_check.projects[0].info.provider_metadata:
+            raise Exception("Provider metadata is missing")
+        
+        provider_metadata = json.loads(workspace_check.projects[0].info.provider_metadata)
+        current_state = provider_metadata.get('state')
+        while current_state in ["unknown", "pulling_image", "creating", "stopped", "starting"]:
+            time.sleep(0.1)
+            workspace_check = self.workspace_api.get_workspace(workspace_id=workspace_id)
+            if not workspace_check.projects[0].info.provider_metadata:
+                raise Exception("Provider metadata is missing during status check")
+            provider_metadata = json.loads(workspace_check.projects[0].info.provider_metadata)
+            current_state = provider_metadata.get('state')
+            
+        if current_state != "started":
+            raise Exception(f"Workspace failed to start. Current state: {current_state}")
+
+    def _wait_for_workspace_stop(self, workspace_id: str) -> None:
+        """Wait for workspace to reach 'stopped' state.
+        
+        Args:
+            workspace_id: The ID of the workspace to check
+            
+        Raises:
+            Exception: If workspace fails to stop or metadata is missing
+        """
+        workspace_check = self.workspace_api.get_workspace(workspace_id=workspace_id)
+        if not workspace_check.projects[0].info.provider_metadata:
+            raise Exception("Provider metadata is missing")
+        
+        provider_metadata = json.loads(workspace_check.projects[0].info.provider_metadata)
+        current_state = provider_metadata.get('state')
+        while current_state in ["started", "stopping"]:
+            time.sleep(0.1)
+            workspace_check = self.workspace_api.get_workspace(workspace_id=workspace_id)
+            if not workspace_check.projects[0].info.provider_metadata:
+                raise Exception("Provider metadata is missing during status check")
+            provider_metadata = json.loads(workspace_check.projects[0].info.provider_metadata)
+            current_state = provider_metadata.get('state')
+            
+        if current_state != "stopped":
+            raise Exception(f"Workspace failed to stop. Current state: {current_state}")
+
     def create(self, params: Optional[CreateWorkspaceParams] = None) -> Workspace:
         """Creates a new workspace and waits for it to start.
         
@@ -112,27 +164,24 @@ class Daytona:
         Returns:
             The created workspace instance
         """
-        if params.id:
-            workspace_id = params.id
-        else:
-            workspace_id = f"sandbox-{str(uuid.uuid4())[:8]}"
+        # If no params provided, create default params for Python
+        if params is None:
+            params = CreateWorkspaceParams(language="python")
 
+        workspace_id = params.id if params.id else f"sandbox-{str(uuid.uuid4())[:8]}"
         code_toolbox = self._get_code_toolbox(params)
 
         try:
             # Create project as a dictionary
             project = {
                 "name": "main",
-                "image": (
-                    params.image if params and params.image 
-                    else code_toolbox.get_default_image()
-                ),
+                "image": params.image if params.image else code_toolbox.get_default_image(),
                 "osUser": (
-                    params.os_user if params and params.os_user
+                    params.os_user if params.os_user
                     else "daytona" if code_toolbox.get_default_image() 
                     else "root"
                 ),
-                "env_vars": params.env_vars if params and params.env_vars else {},
+                "env_vars": params.env_vars if params.env_vars else {},
                 "source": {
                     "repository": {
                         "branch": "main",
@@ -162,28 +211,10 @@ class Daytona:
 
             # Wait for workspace to start
             try:
-                if not workspace.instance.projects[0].info.provider_metadata:
-                    raise Exception("Provider metadata is missing")
-                
-                provider_metadata = json.loads(workspace.instance.projects[0].info.provider_metadata)
-                current_state = provider_metadata.get('state')
-                while current_state in ["unknown", "pulling_image", "creating"]:
-                    time.sleep(1)
-                    workspace_check = self.workspace_api.get_workspace(workspace_id=workspace.id)
-                    if not workspace_check.projects[0].info.provider_metadata:
-                        raise Exception("Provider metadata is missing during status check")
-                    provider_metadata = json.loads(workspace_check.projects[0].info.provider_metadata)
-                    current_state = provider_metadata.get('state')
-                    
-                if current_state != "started":
-                    raise Exception(f"Workspace failed to start. Current state: {current_state}")
+                self._wait_for_workspace_start(workspace.id)
             finally:
                 # If not Daytona SaaS, we don't need to handle pulling image state
                 pass
-
-            # Wait for workspace agent to be ready
-            # TODO: remove
-            time.sleep(3)
 
             return workspace
 
@@ -213,7 +244,7 @@ class Daytona:
                 return WorkspacePythonCodeToolbox()
             case _:
                 raise ValueError(f"Unsupported language: {params.language}")
-
+            
     def remove(self, workspace: Workspace) -> None:
         """Removes a workspace.
         
@@ -246,3 +277,21 @@ class Daytona:
         return Workspace(
             workspace_id, workspace_instance, self.toolbox_api, code_toolbox
         )
+    
+    def start(self, workspace: Workspace) -> None:
+        """Starts a workspace and waits for it to be ready.
+        
+        Args:
+            workspace: The workspace to start
+        """
+        self.workspace_api.start_workspace(workspace_id=workspace.id)
+        self._wait_for_workspace_start(workspace.id)
+    
+    def stop(self, workspace: Workspace) -> None:
+        """Stops a workspace and waits for it to be stopped.
+        
+        Args:
+            workspace: The workspace to stop
+        """
+        self.workspace_api.stop_workspace(workspace_id=workspace.id)
+        self._wait_for_workspace_stop(workspace.id)

@@ -158,6 +158,42 @@ export class Daytona {
   }
 
   /**
+   * Gets a workspace by its ID
+   * @param {string} workspaceId - The ID of the workspace to retrieve
+   * @returns {Promise<Workspace>} The workspace instance
+   */
+  public async get(workspaceId: string): Promise<Workspace> {
+    const workspaceInstance = await this.workspaceApi.getWorkspace({
+      workspaceId
+    })
+    // Default to Python code toolbox for existing workspaces
+    const codeToolbox = new WorkspacePythonCodeToolbox()
+    return new Workspace(workspaceId, workspaceInstance, this.toolboxApi, codeToolbox)
+  }
+
+  /**
+   * Starts a workspace
+   * @param {Workspace} workspace - The workspace to start
+   * @returns {Promise<void>}
+   */
+  public async start(workspace: Workspace) {
+    return this.workspaceApi.startWorkspace({
+      workspaceId: workspace.id,
+    })
+  }
+
+  /**
+   * Stops a workspace
+   * @param {Workspace} workspace - The workspace to stop
+   * @returns {Promise<void>}
+   */
+  public async stop(workspace: Workspace) {
+    return this.workspaceApi.stopWorkspace({
+      workspaceId: workspace.id,
+    })
+  }
+
+  /**
    * Removes a workspace
    * @param {Workspace} workspace - The workspace to remove
    * @returns {Promise<void>}

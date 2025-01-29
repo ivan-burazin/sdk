@@ -1,4 +1,4 @@
-[Daytona TypeScript SDK - v0.1.3](../README.md) / DaytonaConfig
+[Daytona TypeScript SDK - v0.7.0](../README.md) / DaytonaConfig
 
 # Interface: DaytonaConfig
 
@@ -23,7 +23,7 @@ API key for authentication with Daytona server
 
 #### Defined in
 
-[Daytona.ts:20](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/Daytona.ts#L20)
+[Daytona.ts:19](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Daytona.ts#L19)
 
 ___
 
@@ -35,16 +35,16 @@ URL of the Daytona server
 
 #### Defined in
 
-[Daytona.ts:22](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/Daytona.ts#L22)
+[Daytona.ts:21](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Daytona.ts#L21)
 
 ___
 
 ### target
 
-• **target**: `string`
+• **target**: `CreateWorkspaceTargetEnum`
 
 Target environment for workspaces
 
 #### Defined in
 
-[Daytona.ts:24](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/Daytona.ts#L24)
+[Daytona.ts:23](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Daytona.ts#L23)

@@ -2,8 +2,8 @@ import {
   CompletionList,
   LspSymbol,
   Workspace as WorkspaceInstance,
-  WorkspaceToolboxApi,
-} from './client'
+  ToolboxApi,
+} from '@daytonaio/api-client'
 
 /**
  * Supported language server types
@@ -30,7 +30,7 @@ export class LspServer {
   constructor(
     private readonly languageId: LspLanguageId,
     private readonly pathToProject: string,
-    private readonly toolboxApi: WorkspaceToolboxApi,
+    private readonly toolboxApi: ToolboxApi,
     private readonly instance: WorkspaceInstance,
   ) {}
 
@@ -39,14 +39,12 @@ export class LspServer {
    * @returns {Promise<void>}
    */
   public async start(): Promise<void> {
-    return this.toolboxApi.lspStart({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      params: {
+    await this.toolboxApi.lspStart(
+      this.instance.id,
+      {
         languageId: this.languageId,
         pathToProject: this.pathToProject,
-      },
-    })
+      })
   }
 
   /**
@@ -54,14 +52,13 @@ export class LspServer {
    * @returns {Promise<void>}
    */
   public async stop(): Promise<void> {
-    return this.toolboxApi.lspStop({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      params: {
+    await this.toolboxApi.lspStop(
+      this.instance.id,
+      {
         languageId: this.languageId,
         pathToProject: this.pathToProject,
       },
-    })
+    )
   }
 
   /**
@@ -70,15 +67,14 @@ export class LspServer {
    * @returns {Promise<void>}
    */
   public async didOpen(path: string): Promise<void> {
-    return this.toolboxApi.lspDidOpen({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      params: {
+    await this.toolboxApi.lspDidOpen(
+      this.instance.id,
+      {
         languageId: this.languageId,
         pathToProject: this.pathToProject,
         uri: 'file://' + path,
       },
-    })
+    )
   }
 
   /**
@@ -87,15 +83,14 @@ export class LspServer {
    * @returns {Promise<void>}
    */
   public async didClose(path: string): Promise<void> {
-    return this.toolboxApi.lspDidClose({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      params: {
+    await this.toolboxApi.lspDidClose(
+      this.instance.id,
+      {
         languageId: this.languageId,
         pathToProject: this.pathToProject,
         uri: 'file://' + path,
       },
-    })
+    )
   }
 
   /**
@@ -104,13 +99,13 @@ export class LspServer {
    * @returns {Promise<LspSymbol[]>} Array of document symbols
    */
   public async documentSymbols(path: string): Promise<LspSymbol[]> {
-    return this.toolboxApi.lspDocumentSymbols({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      languageId: this.languageId,
-      pathToProject: this.pathToProject,
-      uri: 'file://' + path,
-    })
+    const response = await this.toolboxApi.lspDocumentSymbols(
+      this.instance.id,
+      this.languageId,
+      this.pathToProject,
+      'file://' + path,
+    )
+    return response.data
   }
 
   /**
@@ -119,13 +114,13 @@ export class LspServer {
    * @returns {Promise<LspSymbol[]>} Array of matching symbols
    */
   public async workspaceSymbols(query: string): Promise<LspSymbol[]> {
-    return this.toolboxApi.lspWorkspaceSymbols({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      languageId: this.languageId,
-      pathToProject: this.pathToProject,
+    const response = await this.toolboxApi.lspWorkspaceSymbols(
+      this.instance.id,
+      this.languageId,
+      this.pathToProject,
       query,
-    })
+    )
+    return response.data
   }
 
   /**
@@ -138,15 +133,15 @@ export class LspServer {
     path: string,
     position: Position,
   ): Promise<CompletionList> {
-    return this.toolboxApi.lspCompletions({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      params: {
+    const response = await this.toolboxApi.lspCompletions(
+      this.instance.id,
+      {
         languageId: this.languageId,
         pathToProject: this.pathToProject,
         uri: 'file://' + path,
         position,
       },
-    })
+    )
+    return response.data
   }
 }

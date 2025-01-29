@@ -1,4 +1,4 @@
-[Daytona TypeScript SDK - v0.1.3](../README.md) / Workspace
+[Daytona TypeScript SDK - v0.7.0](../README.md) / Workspace
 
 # Class: Workspace
 
@@ -18,6 +18,7 @@ Represents a Daytona workspace instance with file system, git, and process manag
 - [id](Workspace.md#id)
 - [process](Workspace.md#process)
 - [toolboxApi](Workspace.md#toolboxapi)
+- [workspaceApi](Workspace.md#workspaceapi)
 
 ### Methods
 
@@ -28,7 +29,7 @@ Represents a Daytona workspace instance with file system, git, and process manag
 
 ### constructor
 
-• **new Workspace**(`id`, `instance`, `toolboxApi`, `codeToolbox`): [`Workspace`](Workspace.md)
+• **new Workspace**(`id`, `instance`, `workspaceApi`, `toolboxApi`, `codeToolbox`): [`Workspace`](Workspace.md)
 
 Creates a new workspace instance
 
@@ -38,7 +39,8 @@ Creates a new workspace instance
 | :------ | :------ | :------ |
 | `id` | `string` | Unique identifier for the workspace |
 | `instance` | `Workspace` | The underlying workspace instance |
-| `toolboxApi` | `WorkspaceToolboxApi` | API client for workspace operations |
+| `workspaceApi` | `WorkspaceApi` | API client for workspace operations |
+| `toolboxApi` | `ToolboxApi` | API client for toolbox operations |
 | `codeToolbox` | [`WorkspaceCodeToolbox`](../interfaces/WorkspaceCodeToolbox.md) | Language-specific toolbox implementation |
 
 #### Returns
@@ -47,7 +49,7 @@ Creates a new workspace instance
 
 #### Defined in
 
-[Workspace.ts:37](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/Workspace.ts#L37)
+[Workspace.ts:39](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Workspace.ts#L39)
 
 ## Properties
 
@@ -59,7 +61,7 @@ File system operations for the workspace
 
 #### Defined in
 
-[Workspace.ts:24](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/Workspace.ts#L24)
+[Workspace.ts:24](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Workspace.ts#L24)
 
 ___
 
@@ -71,7 +73,7 @@ Git operations for the workspace
 
 #### Defined in
 
-[Workspace.ts:26](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/Workspace.ts#L26)
+[Workspace.ts:26](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Workspace.ts#L26)
 
 ___
 
@@ -83,7 +85,7 @@ Unique identifier for the workspace
 
 #### Defined in
 
-[Workspace.ts:38](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/Workspace.ts#L38)
+[Workspace.ts:40](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Workspace.ts#L40)
 
 ___
 
@@ -95,25 +97,37 @@ Process and code execution operations
 
 #### Defined in
 
-[Workspace.ts:28](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/Workspace.ts#L28)
+[Workspace.ts:28](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Workspace.ts#L28)
 
 ___
 
 ### toolboxApi
 
-• `Readonly` **toolboxApi**: `WorkspaceToolboxApi`
+• `Readonly` **toolboxApi**: `ToolboxApi`
+
+API client for toolbox operations
+
+#### Defined in
+
+[Workspace.ts:43](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Workspace.ts#L43)
+
+___
+
+### workspaceApi
+
+• `Readonly` **workspaceApi**: `WorkspaceApi`
 
 API client for workspace operations
 
 #### Defined in
 
-[Workspace.ts:40](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/Workspace.ts#L40)
+[Workspace.ts:42](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Workspace.ts#L42)
 
 ## Methods
 
 ### createLspServer
 
-▸ **createLspServer**(`languageId`, `pathToProject`): [`LspServer`](LspServer.md)
+▸ **createLspServer**(`languageId`, `pathToProject`): `LspServer`
 
 Creates a new Language Server Protocol (LSP) server instance
 
@@ -126,28 +140,28 @@ Creates a new Language Server Protocol (LSP) server instance
 
 #### Returns
 
-[`LspServer`](LspServer.md)
+`LspServer`
 
 A new LSP server instance
 
 #### Defined in
 
-[Workspace.ts:66](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/Workspace.ts#L66)
+[Workspace.ts:68](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Workspace.ts#L68)
 
 ___
 
 ### getWorkspaceRootDir
 
-▸ **getWorkspaceRootDir**(): `Promise`\<`string`\>
+▸ **getWorkspaceRootDir**(): `Promise`\<`undefined` \| `string`\>
 
 Gets the root directory path of the workspace
 
 #### Returns
 
-`Promise`\<`string`\>
+`Promise`\<`undefined` \| `string`\>
 
 The absolute path to the workspace root
 
 #### Defined in
 
-[Workspace.ts:52](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/Workspace.ts#L52)
+[Workspace.ts:55](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Workspace.ts#L55)

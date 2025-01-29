@@ -2,12 +2,17 @@
 
 * [daytona\_sdk.daytona](#daytona_sdk.daytona)
   * [DaytonaConfig](#daytona_sdk.daytona.DaytonaConfig)
+  * [WorkspaceResources](#daytona_sdk.daytona.WorkspaceResources)
+    * [memory](#daytona_sdk.daytona.WorkspaceResources.memory)
+    * [disk](#daytona_sdk.daytona.WorkspaceResources.disk)
   * [CreateWorkspaceParams](#daytona_sdk.daytona.CreateWorkspaceParams)
   * [Daytona](#daytona_sdk.daytona.Daytona)
     * [\_\_init\_\_](#daytona_sdk.daytona.Daytona.__init__)
     * [create](#daytona_sdk.daytona.Daytona.create)
     * [remove](#daytona_sdk.daytona.Daytona.remove)
     * [get\_current\_workspace](#daytona_sdk.daytona.Daytona.get_current_workspace)
+    * [start](#daytona_sdk.daytona.Daytona.start)
+    * [stop](#daytona_sdk.daytona.Daytona.stop)
 
 <a id="daytona_sdk.daytona"></a>
 
@@ -26,7 +31,7 @@ This module provides the main entry point for interacting with Daytona Server AP
 class DaytonaConfig()
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/python/src/daytona_sdk/daytona.py#L30)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/daytona.py#L33)
 
 Configuration options for initializing the Daytona client.
 
@@ -35,6 +40,31 @@ Configuration options for initializing the Daytona client.
 - `api_key` - API key for authentication with Daytona server
 - `server_url` - URL of the Daytona server
 - `target` - Target environment for workspaces
+
+<a id="daytona_sdk.daytona.WorkspaceResources"></a>
+
+## WorkspaceResources Objects
+
+```python
+@dataclass
+class WorkspaceResources()
+```
+
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/daytona.py#L46)
+
+Resources configuration for workspace
+
+<a id="daytona_sdk.daytona.WorkspaceResources.memory"></a>
+
+#### memory
+
+in MB
+
+<a id="daytona_sdk.daytona.WorkspaceResources.disk"></a>
+
+#### disk
+
+in GB
 
 <a id="daytona_sdk.daytona.CreateWorkspaceParams"></a>
 
@@ -45,15 +75,9 @@ Configuration options for initializing the Daytona client.
 class CreateWorkspaceParams()
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/python/src/daytona_sdk/daytona.py#L44)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/daytona.py#L54)
 
 Parameters for creating a new workspace.
-
-**Arguments**:
-
-- `id` - Optional workspace ID. If not provided, a random ID will be generated
-- `image` - Optional Docker image to use for the workspace
-- `language` - Programming language to use in the workspace
 
 <a id="daytona_sdk.daytona.Daytona"></a>
 
@@ -63,7 +87,7 @@ Parameters for creating a new workspace.
 class Daytona()
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/python/src/daytona_sdk/daytona.py#L57)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/daytona.py#L68)
 
 <a id="daytona_sdk.daytona.Daytona.__init__"></a>
 
@@ -73,7 +97,7 @@ class Daytona()
 def __init__(config: Optional[DaytonaConfig] = None)
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/python/src/daytona_sdk/daytona.py#L58)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/daytona.py#L69)
 
 Initialize Daytona instance with optional configuration.
 If no config is provided, reads from environment variables using environs.
@@ -95,23 +119,19 @@ If no config is provided, reads from environment variables using environs.
 def create(params: Optional[CreateWorkspaceParams] = None) -> Workspace
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/python/src/daytona_sdk/daytona.py#L100)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/daytona.py#L162)
 
-Creates a new workspace.
+Creates a new workspace and waits for it to start.
 
 **Arguments**:
 
-- `params` - Parameters for workspace creation
+- `params` - Optional parameters for workspace creation. If not provided,
+  defaults to Python language.
   
 
 **Returns**:
 
   The created workspace instance
-  
-
-**Raises**:
-
-- `ValueError` - When an unsupported language is specified
 
 <a id="daytona_sdk.daytona.Daytona.remove"></a>
 
@@ -121,7 +141,7 @@ Creates a new workspace.
 def remove(workspace: Workspace) -> None
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/python/src/daytona_sdk/daytona.py#L174)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/daytona.py#L237)
 
 Removes a workspace.
 
@@ -134,19 +154,56 @@ Removes a workspace.
 #### get\_current\_workspace
 
 ```python
-def get_current_workspace() -> Workspace
+def get_current_workspace(workspace_id: str) -> Workspace
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/python/src/daytona_sdk/daytona.py#L182)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/daytona.py#L245)
 
-Get the current workspace based on environment variables.
+Get a workspace by its ID.
+
+**Arguments**:
+
+- `workspace_id` - The ID of the workspace to retrieve
+  
 
 **Returns**:
 
-- `Workspace` - The current workspace instance
+- `Workspace` - The workspace instance
   
 
 **Raises**:
 
-- `ValueError` - If DAYTONA_WORKSPACE_ID is not set in environment
+- `ValueError` - If workspace_id is not provided
+
+<a id="daytona_sdk.daytona.Daytona.start"></a>
+
+#### start
+
+```python
+def start(workspace: Workspace) -> None
+```
+
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/daytona.py#L270)
+
+Starts a workspace and waits for it to be ready.
+
+**Arguments**:
+
+- `workspace` - The workspace to start
+
+<a id="daytona_sdk.daytona.Daytona.stop"></a>
+
+#### stop
+
+```python
+def stop(workspace: Workspace) -> None
+```
+
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/daytona.py#L279)
+
+Stops a workspace and waits for it to be stopped.
+
+**Arguments**:
+
+- `workspace` - The workspace to stop
 

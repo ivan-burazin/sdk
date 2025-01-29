@@ -4,6 +4,7 @@
   * [Workspace](#daytona_sdk.workspace.Workspace)
     * [get\_workspace\_root\_dir](#daytona_sdk.workspace.Workspace.get_workspace_root_dir)
     * [create\_lsp\_server](#daytona_sdk.workspace.Workspace.create_lsp_server)
+    * [set\_labels](#daytona_sdk.workspace.Workspace.set_labels)
 
 <a id="daytona_sdk.workspace"></a>
 
@@ -22,7 +23,7 @@ Git, process execution, and LSP functionality.
 class Workspace()
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/python/src/daytona_sdk/workspace.py#L17)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/workspace.py#L19)
 
 Represents a Daytona workspace instance.
 
@@ -51,7 +52,7 @@ and LSP functionality.
 def get_workspace_root_dir() -> str
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/python/src/daytona_sdk/workspace.py#L52)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/workspace.py#L54)
 
 Gets the root directory path of the workspace.
 
@@ -68,7 +69,7 @@ def create_lsp_server(language_id: LspLanguageId,
                       path_to_project: str) -> LspServer
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/python/src/daytona_sdk/workspace.py#L63)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/workspace.py#L65)
 
 Creates a new Language Server Protocol (LSP) server instance.
 
@@ -81,4 +82,31 @@ Creates a new Language Server Protocol (LSP) server instance.
 **Returns**:
 
   A new LSP server instance
+
+<a id="daytona_sdk.workspace.Workspace.set_labels"></a>
+
+#### set\_labels
+
+```python
+def set_labels(labels: Dict[str, str]) -> Dict[str, str]
+```
+
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/workspace.py#L79)
+
+Sets labels for the workspace.
+
+**Arguments**:
+
+- `labels` - Dictionary of key-value pairs representing workspace labels
+  
+
+**Returns**:
+
+  Dictionary containing the updated workspace labels
+  
+
+**Raises**:
+
+- `urllib.error.HTTPError` - If the server request fails
+- `urllib.error.URLError` - If there's a network/connection error
 

@@ -5,10 +5,9 @@ import { Workspace } from './Workspace'
 import {
   Configuration,
   WorkspaceApi,
-  GitProviderApi,
-  WorkspaceToolboxApi,
-  CreateProjectDTO,
-} from './client'
+  ToolboxApi,
+  CreateWorkspaceTargetEnum,
+} from '@daytonaio/api-client'
 import { WorkspaceTsCodeToolbox } from './code-toolbox/WorkspaceTsCodeToolbox'
 
 /**
@@ -21,14 +20,28 @@ export interface DaytonaConfig {
   /** URL of the Daytona server */
   serverUrl: string
   /** Target environment for workspaces */
-  target: string
+  target: CreateWorkspaceTargetEnum
 }
 
 /** 
  * Supported programming languages for code execution
- * @typedef {('python'|'javascript'|'typescript')} CodeLanguage
  */
 export type CodeLanguage = 'python' | 'javascript' | 'typescript'
+
+/**
+ * Resource allocation for a workspace
+ * @interface WorkspaceResources
+ */
+export interface WorkspaceResources {
+  /** CPU allocation for the workspace */
+  cpu?: number
+  /** GPU allocation for the workspace */
+  gpu?: number
+  /** Memory allocation for the workspace in MB */
+  memory?: number
+  /** Disk space allocation for the workspace in MB */
+  disk?: number
+}
 
 /**
  * Parameters for creating a new workspace
@@ -39,10 +52,22 @@ export type CreateWorkspaceParams = {
   id?: string
   /** Optional Docker image to use for the workspace */
   image?: string
-  /** Programming language to use in the workspace */
-  language: CodeLanguage
+  /** Optional os user to use for the workspace */
+  user?: string
+  /** Programming language for direct code execution */
+  language?: CodeLanguage
   /** Optional environment variables to set in the workspace */
   envVars?: Record<string, string>
+  /** Workspace labels */
+  labels?: Record<string, string>
+  /** Is the workspace port preview public */
+  public?: boolean
+  /** Target location for the workspace */
+  target?: string
+  /** Resource allocation for the workspace */
+  resources?: WorkspaceResources
+  /** If true, will not wait for the workspace to be ready before returning */
+  async?: boolean
 }
 
 /**
@@ -50,10 +75,9 @@ export type CreateWorkspaceParams = {
  * @class Daytona
  */
 export class Daytona {
-  private readonly gitProviderApi: GitProviderApi
   private readonly workspaceApi: WorkspaceApi
-  private readonly toolboxApi: WorkspaceToolboxApi
-  private readonly target: string
+  private readonly toolboxApi: ToolboxApi
+  private readonly target: CreateWorkspaceTargetEnum
 
   private readonly apiKey: string
   private readonly serverUrl: string
@@ -72,7 +96,8 @@ export class Daytona {
     if (!serverUrl) {
       throw new Error('Server URL is required')
     }
-    const target = config?.target || process.env.DAYTONA_TARGET || 'local'
+    const envTarget = process.env.DAYTONA_TARGET as CreateWorkspaceTargetEnum
+    const target = config?.target || envTarget
 
     this.apiKey = apiKey
     this.serverUrl = serverUrl
@@ -80,15 +105,15 @@ export class Daytona {
 
     const configuration = new Configuration({
       basePath: this.serverUrl,
-      //  apiKey: this.apiKey,
-      headers: {
-        Authorization: `Bearer ${this.apiKey}`,
+      baseOptions: {
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+        },
       },
     })
 
-    this.gitProviderApi = new GitProviderApi(configuration)
     this.workspaceApi = new WorkspaceApi(configuration)
-    this.toolboxApi = new WorkspaceToolboxApi(configuration)
+    this.toolboxApi = new ToolboxApi(configuration)
   }
 
   /**
@@ -99,60 +124,39 @@ export class Daytona {
   public async create(params?: CreateWorkspaceParams): Promise<Workspace> {
     const workspaceId = params?.id || `sandbox-${uuidv4().slice(0, 8)}`
 
-    const codeToolbox = (() => {
-      if (!params) {
-        //  use python as default language
-        return new WorkspacePythonCodeToolbox()
-      }
-      switch (params?.language) {
-        case 'javascript':
-        case 'typescript':
-          return new WorkspaceTsCodeToolbox()
-        case 'python':
-          return new WorkspacePythonCodeToolbox()
-        default:
-          throw new Error(`Unsupported language: ${params?.language}`)
-      }
-    })()
+    const codeToolbox = this.getCodeToolbox(params?.language)
 
-    const projects: CreateProjectDTO[] = [
-      {
-        name: 'main',
-        image: params?.image || codeToolbox.getDefaultImage(),
-        envVars: params?.envVars || {},
-        source: {
-          //  todo: remove when repo is not required
-          repository: {
-            branch: 'main',
-            cloneTarget: 'branch',
-            id: 'python-helloworld',
-            name: 'python-helloworld',
-            owner: 'dbarnett',
-            path: undefined,
-            prNumber: undefined,
-            sha: '288d7ced1b971fd1b3b0c36002b96e1c3f91542e',
-            source: 'github.com',
-            url: 'https://github.com/dbarnett/python-helloworld.git',
-          },
-        },
-      },
-    ]
+    const labels = params?.labels || {}
+    if (params?.language) {
+      labels[`code-toolbox-language`] = params.language
+    }
 
-    const workspaceInstance = await this.workspaceApi.createWorkspace({
-      workspace: {
+    const reponse = await this.workspaceApi.createWorkspace({
         id: workspaceId,
         name: workspaceId, //  todo: remove this after project refactor
-        projects,
+        image: params?.image,
+        user: params?.user,
+        env: params?.envVars || {},
         target: this.target,
-      },
+        cpu: params?.resources?.cpu,
+        gpu: params?.resources?.gpu,
+        memory: params?.resources?.memory,
+        disk: params?.resources?.disk,
     })
+
+    const workspaceInstance = reponse.data
 
     const workspace = new Workspace(
       workspaceId,
       workspaceInstance,
+      this.workspaceApi,
       this.toolboxApi,
       codeToolbox,
     )
+
+    if (!params?.async) {
+      await this.waitUntilReady(workspace)
+    }
 
     return workspace
   }
@@ -163,23 +167,20 @@ export class Daytona {
    * @returns {Promise<Workspace>} The workspace instance
    */
   public async get(workspaceId: string): Promise<Workspace> {
-    const workspaceInstance = await this.workspaceApi.getWorkspace({
-      workspaceId
-    })
-    // Default to Python code toolbox for existing workspaces
-    const codeToolbox = new WorkspacePythonCodeToolbox()
-    return new Workspace(workspaceId, workspaceInstance, this.toolboxApi, codeToolbox)
+    const response = await this.workspaceApi.getWorkspace(workspaceId)
+    const workspaceInstance = response.data
+    const language = workspaceInstance.labels && workspaceInstance.labels[`code-toolbox-language`]
+    const codeToolbox = this.getCodeToolbox(language as CodeLanguage)
+
+    return new Workspace(workspaceId, workspaceInstance, this.workspaceApi, this.toolboxApi, codeToolbox)
   }
 
   /**
    * Starts a workspace
    * @param {Workspace} workspace - The workspace to start
-   * @returns {Promise<void>}
    */
   public async start(workspace: Workspace) {
-    return this.workspaceApi.startWorkspace({
-      workspaceId: workspace.id,
-    })
+    await this.workspaceApi.startWorkspace(workspace.id)
   }
 
   /**
@@ -188,9 +189,7 @@ export class Daytona {
    * @returns {Promise<void>}
    */
   public async stop(workspace: Workspace) {
-    return this.workspaceApi.stopWorkspace({
-      workspaceId: workspace.id,
-    })
+    await this.workspaceApi.stopWorkspace(workspace.id)
   }
 
   /**
@@ -198,9 +197,43 @@ export class Daytona {
    * @param {Workspace} workspace - The workspace to remove
    * @returns {Promise<void>}
    */
-  public remove(workspace: Workspace) {
-    return this.workspaceApi.removeWorkspace({
-      workspaceId: workspace.id,
-    })
+  public async remove(workspace: Workspace) {
+    await this.workspaceApi.deleteWorkspace(workspace.id, true)
+  }
+
+  public async waitUntilReady(workspace: Workspace) {
+    const maxAttempts = 60; // 5 minutes with 5 second intervals
+    let attempts = 0;
+
+    while (attempts < maxAttempts) {
+      const response = await this.workspaceApi.getWorkspace(workspace.id);
+      const state = response.data.state;
+
+      if (state === 'started') {
+        return;
+      }
+
+      if (state === 'error') {
+        throw new Error(`Workspace failed to start with status: ${status}`);
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 100)); // Wait 100 ms between checks
+      attempts++;
+    }
+
+    throw new Error('Workspace failed to become ready within the timeout period');
+  }
+
+  private getCodeToolbox(language?: CodeLanguage) {
+    switch (language) {
+      case 'javascript':
+      case 'typescript':
+        return new WorkspaceTsCodeToolbox()
+      case 'python':
+      case undefined:
+        return new WorkspacePythonCodeToolbox()
+      default:
+        throw new Error(`Unsupported language: ${language}`)
+    }
   }
 }

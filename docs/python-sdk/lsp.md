@@ -28,7 +28,7 @@ completions, symbols, and diagnostics.
 class Position()
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/python/src/daytona_sdk/lsp_server.py#L19)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/lsp_server.py#L22)
 
 Represents a position in a text document.
 
@@ -45,7 +45,7 @@ Represents a position in a text document.
 class LspServer()
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/python/src/daytona_sdk/lsp_server.py#L31)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/lsp_server.py#L34)
 
 Provides Language Server Protocol functionality.
 
@@ -64,7 +64,7 @@ Provides Language Server Protocol functionality.
 def start() -> None
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/python/src/daytona_sdk/lsp_server.py#L53)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/lsp_server.py#L56)
 
 Starts the language server.
 
@@ -76,7 +76,7 @@ Starts the language server.
 def stop() -> None
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/python/src/daytona_sdk/lsp_server.py#L64)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/lsp_server.py#L66)
 
 Stops the language server.
 
@@ -90,7 +90,7 @@ Should be called when the LSP server is no longer needed to free up resources.
 def did_open(path: str) -> None
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/python/src/daytona_sdk/lsp_server.py#L78)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/lsp_server.py#L79)
 
 Notifies the language server that a file has been opened.
 
@@ -109,7 +109,7 @@ Notifies the language server that a file has been opened.
 def did_close(path: str) -> None
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/python/src/daytona_sdk/lsp_server.py#L97)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/lsp_server.py#L97)
 
 Notifies the language server that a file has been closed.
 
@@ -128,7 +128,7 @@ Notifies the language server that a file has been closed.
 def document_symbols(path: str) -> List[LspSymbol]
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/python/src/daytona_sdk/lsp_server.py#L116)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/lsp_server.py#L115)
 
 Gets symbol information from a document.
 
@@ -149,7 +149,7 @@ Gets symbol information from a document.
 def workspace_symbols(query: str) -> List[LspSymbol]
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/python/src/daytona_sdk/lsp_server.py#L133)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/lsp_server.py#L131)
 
 Searches for symbols across the workspace.
 
@@ -170,7 +170,7 @@ Searches for symbols across the workspace.
 def completions(path: str, position: Position) -> CompletionList
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/python/src/daytona_sdk/lsp_server.py#L150)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/lsp_server.py#L147)
 
 Gets completion suggestions at a position in a file.
 

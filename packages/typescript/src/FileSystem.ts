@@ -5,8 +5,8 @@ import {
   ReplaceResult,
   SearchFilesResponse,
   Workspace as WorkspaceInstance,
-  WorkspaceToolboxApi,
-} from './client'
+  ToolboxApi,
+} from '@daytonaio/api-client'
 
 /**
  * Parameters for setting file permissions
@@ -28,7 +28,7 @@ type FilePermissionsParams = {
 export class FileSystem {
   constructor(
     private readonly instance: WorkspaceInstance,
-    private readonly toolboxApi: WorkspaceToolboxApi,
+    private readonly toolboxApi: ToolboxApi,
   ) {}
 
   /**
@@ -37,13 +37,9 @@ export class FileSystem {
    * @param {string} mode - Folder permissions in octal format
    * @returns {Promise<void>}
    */
-  public createFolder(path: string, mode: string): Promise<void> {
-    return this.toolboxApi.fsCreateFolder({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      path,
-      mode,
-    })
+  public async createFolder(path: string, mode: string): Promise<void> {
+    const response = await this.toolboxApi.createFolder(this.instance.id, path, mode)
+    return response.data
   }
 
   /**
@@ -51,12 +47,9 @@ export class FileSystem {
    * @param {string} path - Path to the file to delete
    * @returns {Promise<void>}
    */
-  public deleteFile(path: string): Promise<void> {
-    return this.toolboxApi.fsDeleteFile({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      path,
-    })
+  public async deleteFile(path: string): Promise<void> {
+    const response = await this.toolboxApi.deleteFile(this.instance.id, path)
+    return response.data
   }
 
   /**
@@ -64,12 +57,9 @@ export class FileSystem {
    * @param {string} path - Path to the file to download
    * @returns {Promise<Blob>} The file contents as a Blob
    */
-  public downloadFile(path: string): Promise<Blob> {
-    return this.toolboxApi.fsDownloadFile({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      path,
-    })
+  public async downloadFile(path: string): Promise<Blob> {
+    const response = await this.toolboxApi.downloadFile(this.instance.id, path)
+    return response.data
   }
 
   /**
@@ -78,13 +68,9 @@ export class FileSystem {
    * @param {string} pattern - Search pattern
    * @returns {Promise<Array<Match>>} Array of matching files
    */
-  public findFiles(path: string, pattern: string): Promise<Array<Match>> {
-    return this.toolboxApi.fsFindInFiles({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      path,
-      pattern,
-    })
+  public async findFiles(path: string, pattern: string): Promise<Array<Match>> {
+    const response = await this.toolboxApi.findInFiles(this.instance.id, path, pattern)
+    return response.data
   }
 
   /**
@@ -92,12 +78,9 @@ export class FileSystem {
    * @param {string} path - Path to the file
    * @returns {Promise<FileInfo>} File information
    */
-  public getFileDetails(path: string): Promise<FileInfo> {
-    return this.toolboxApi.fsGetFileDetails({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      path,
-    })
+  public async getFileDetails(path: string): Promise<FileInfo> {
+    const response = await this.toolboxApi.getFileInfo(this.instance.id, path)
+    return response.data
   }
 
   /**
@@ -105,12 +88,9 @@ export class FileSystem {
    * @param {string} path - Directory path to list
    * @returns {Promise<FileInfo[]>} Array of file information
    */
-  public listFiles(path: string): Promise<FileInfo[]> {
-    return this.toolboxApi.fsListFiles({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      path,
-    })
+  public async listFiles(path: string): Promise<FileInfo[]> {
+    const response = await this.toolboxApi.listFiles(this.instance.id, path)
+    return response.data
   }
 
   /**
@@ -119,13 +99,9 @@ export class FileSystem {
    * @param {string} destination - Destination path
    * @returns {Promise<void>}
    */
-  public moveFiles(source: string, destination: string): Promise<void> {
-    return this.toolboxApi.fsMoveFile({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      source,
-      destination,
-    })
+  public async moveFiles(source: string, destination: string): Promise<void> {
+    const response = await this.toolboxApi.moveFile(this.instance.id, source, destination)
+    return response.data
   }
 
   /**
@@ -135,22 +111,19 @@ export class FileSystem {
    * @param {string} newValue - Replacement value
    * @returns {Promise<Array<ReplaceResult>>} Results of the replace operation
    */
-  public replaceInFiles(
+  public async replaceInFiles(
     files: string[],
     pattern: string,
     newValue: string,
   ): Promise<Array<ReplaceResult>> {
-    const ReplaceRequest: ReplaceRequest = {
+    const replaceRequest: ReplaceRequest = {
       files,
       newValue,
       pattern,
     }
 
-    return this.toolboxApi.fsReplaceInFiles({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      replace: ReplaceRequest,
-    })
+    const response = await this.toolboxApi.replaceInFiles(this.instance.id, replaceRequest)
+    return response.data
   }
 
   /**
@@ -159,16 +132,12 @@ export class FileSystem {
    * @param {string} pattern - Search pattern
    * @returns {Promise<SearchFilesResponse>} Search results
    */
-  public searchFiles(
+  public async searchFiles(
     path: string,
     pattern: string,
   ): Promise<SearchFilesResponse> {
-    return this.toolboxApi.fsSearchFiles({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      path,
-      pattern,
-    })
+    const response = await this.toolboxApi.searchFiles(this.instance.id, path, pattern)
+    return response.data
   }
 
   /**
@@ -177,18 +146,12 @@ export class FileSystem {
    * @param {FilePermissionsParams} permissions - Permission settings
    * @returns {Promise<void>}
    */
-  public setFilePermissions(
+  public async setFilePermissions(
     path: string,
     permissions: FilePermissionsParams,
   ): Promise<void> {
-    return this.toolboxApi.fsSetFilePermissions({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      path,
-      group: permissions.group,
-      mode: permissions.mode,
-      owner: permissions.owner,
-    })
+    const response = await this.toolboxApi.setFilePermissions(this.instance.id, path, permissions.owner!, permissions.group!, permissions.mode!)
+    return response.data
   }
 
   /**
@@ -197,12 +160,8 @@ export class FileSystem {
    * @param {Blob} file - File contents to upload
    * @returns {Promise<void>}
    */
-  public uploadFile(path: string, file: Blob): Promise<void> {
-    return this.toolboxApi.fsUploadFile({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      path,
-      file,
-    })
+  public async uploadFile(path: string, file: File): Promise<void> {
+    const response = await this.toolboxApi.uploadFile(this.instance.id, path, file)
+    return response.data
   }
 }

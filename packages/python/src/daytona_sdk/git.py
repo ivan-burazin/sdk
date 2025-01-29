@@ -6,12 +6,15 @@ committing changes, pushing/pulling, and checking repository status.
 """
 
 from typing import List, Optional, TYPE_CHECKING
-from api_client import (
+from daytona_api_client import (
     GitStatus,
     ListBranchResponse,
-    Match,
     Workspace as WorkspaceInstance,
-    WorkspaceToolboxApi,
+    ToolboxApi,
+    GitAddRequest,
+    GitCloneRequest,
+    GitCommitRequest,
+    GitRepoRequest,
 )
 
 if TYPE_CHECKING:
@@ -30,7 +33,7 @@ class Git:
     def __init__(
         self,
         workspace: "Workspace",
-        toolbox_api: WorkspaceToolboxApi,
+        toolbox_api: ToolboxApi,
         instance: WorkspaceInstance,
     ):
         self.workspace = workspace
@@ -46,8 +49,10 @@ class Git:
         """
         self.toolbox_api.git_add_files(
             workspace_id=self.instance.id,
-            project_id="main",
-            params={"path": path, "files": files},
+            git_add_request=GitAddRequest(
+                path=path,
+                files=files
+            ),
         )
 
     def branches(self, path: str) -> ListBranchResponse:
@@ -59,9 +64,8 @@ class Git:
         Returns:
             List of branches and their information
         """
-        return self.toolbox_api.git_branch_list(
+        return self.toolbox_api.git_list_branches(
             workspace_id=self.instance.id,
-            project_id="main",
             path=path,
         )
 
@@ -86,15 +90,14 @@ class Git:
         """
         self.toolbox_api.git_clone_repository(
             workspace_id=self.instance.id,
-            project_id="main",
-            params={
-                "url": url,
-                "branch": branch,
-                "path": path,
-                "username": username,
-                "password": password,
-                "commitId": commit_id,
-            },
+            git_clone_request=GitCloneRequest(
+                url=url,
+                branch=branch,
+                path=path,
+                username=username,
+                password=password,
+                commitId=commit_id,
+            )
         )
 
     def commit(self, path: str, message: str, author: str, email: str) -> None:
@@ -108,8 +111,12 @@ class Git:
         """
         self.toolbox_api.git_commit_changes(
             workspace_id=self.instance.id,
-            project_id="main",
-            params={"path": path, "message": message, "author": author, "email": email},
+            git_commit_request=GitCommitRequest(
+                path=path,
+                message=message,
+                author=author,
+                email=email
+            ),
         )
 
     def push(
@@ -124,8 +131,11 @@ class Git:
         """
         self.toolbox_api.git_push_changes(
             workspace_id=self.instance.id,
-            project_id="main",
-            params={"path": path, "username": username, "password": password},
+            git_repo_request=GitRepoRequest(
+                path=path,
+                username=username,
+                password=password
+            ),
         )
 
     def pull(
@@ -140,8 +150,11 @@ class Git:
         """
         self.toolbox_api.git_pull_changes(
             workspace_id=self.instance.id,
-            project_id="main",
-            params={"path": path, "username": username, "password": password},
+            git_repo_request=GitRepoRequest(
+                path=path,
+                username=username,
+                password=password
+            ),
         )
 
     def status(self, path: str) -> GitStatus:
@@ -153,8 +166,7 @@ class Git:
         Returns:
             Repository status information including staged, unstaged, and untracked files
         """
-        return self.toolbox_api.git_git_status(
+        return self.toolbox_api.git_get_status(
             workspace_id=self.instance.id,
-            project_id="main",
             path=path,
         )

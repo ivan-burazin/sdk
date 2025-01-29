@@ -9,6 +9,9 @@ async function main() {
 
   try {
     const rootDir = await workspace.getWorkspaceRootDir()
+    if (!rootDir) {
+      throw new Error('Failed to get workspace root directory')
+    }
 
     //  list files in the workspace
     const files = await workspace.fs.listFiles(rootDir)
@@ -21,7 +24,7 @@ async function main() {
     const filePath = path.join(newDir, 'data.txt')
 
     //  add a new file to the workspace
-    const fileContent = new Blob([Buffer.from('Hello, World!')], {
+    const fileContent = new File([Buffer.from('Hello, World!')], 'data.txt', {
       type: 'text/plain',
     })
     await workspace.fs.uploadFile(filePath, fileContent)
@@ -39,7 +42,7 @@ async function main() {
 
     //  read the file
     const downloadedFile = await workspace.fs.downloadFile(filePath)
-    console.log('File content:', await downloadedFile.text())
+    console.log('File content:', downloadedFile.toString())
 
     //  change the file permissions
     await workspace.fs.setFilePermissions(filePath, { mode: '777' })

@@ -5,8 +5,8 @@ export type { WorkspaceCodeToolbox } from './Workspace'
 export { FileSystem } from './FileSystem'
 export { Git } from './Git'
 export { Process } from './Process'
-export { LspServer } from './LspServer'
-export type { LspLanguageId, Position } from './LspServer'
+// export { LspServer } from './LspServer'
+// export type { LspLanguageId, Position } from './LspServer'
 
 // Re-export necessary types from client
 export type {
@@ -17,6 +17,6 @@ export type {
   GitStatus,
   ListBranchResponse,
   ExecuteResponse,
-  CompletionList,
-  LspSymbol,
-} from './client'
+  // CompletionList,
+  // LspSymbol,
+} from '@daytonaio/api-client'

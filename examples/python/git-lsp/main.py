@@ -16,6 +16,8 @@ def main():
             "https://github.com/panaverse/learn-typescript", project_dir, "master"
         )
 
+        workspace.git.pull(project_dir)
+
         # Search for the file we want to work on
         matches = workspace.fs.find_files(project_dir, "var obj1 = new Base();")
         print("Matches:", matches)

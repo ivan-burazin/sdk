@@ -13,9 +13,8 @@ from .filesystem import FileSystem
 from .git import Git
 from .process import Process
 from .lsp_server import LspServer, LspLanguageId
-from api_client import Workspace as WorkspaceInstance, WorkspaceToolboxApi
-from .code_toolbox.workspace_python_code_toolbox import WorkspaceCodeToolbox
-
+from daytona_api_client import Workspace as WorkspaceInstance, ToolboxApi
+from .protocols import WorkspaceCodeToolbox
 
 class Workspace:
     """Represents a Daytona workspace instance.
@@ -39,7 +38,7 @@ class Workspace:
         self,
         id: str,
         instance: WorkspaceInstance,
-        toolbox_api: WorkspaceToolboxApi,
+        toolbox_api: ToolboxApi,
         code_toolbox: WorkspaceCodeToolbox,
     ):
         self.id = id
@@ -59,7 +58,7 @@ class Workspace:
             The absolute path to the workspace root
         """
         response = self.toolbox_api.get_project_dir(
-            workspace_id=self.instance.id, project_id="main"
+            workspace_id=self.instance.id
         )
         return response.dir
 

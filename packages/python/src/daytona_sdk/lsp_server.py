@@ -6,11 +6,14 @@ completions, symbols, and diagnostics.
 """
 
 from typing import List, Dict, Literal
-from api_client import (
+from daytona_api_client import (
     CompletionList,
     LspSymbol,
     Workspace as WorkspaceInstance,
-    WorkspaceToolboxApi,
+    ToolboxApi,
+    LspServerRequest,
+    LspDocumentRequest,
+    LspCompletionParams
 )
 
 LspLanguageId = Literal["typescript"]
@@ -42,7 +45,7 @@ class LspServer:
         self,
         language_id: LspLanguageId,
         path_to_project: str,
-        toolbox_api: WorkspaceToolboxApi,
+        toolbox_api: ToolboxApi,
         instance: WorkspaceInstance,
     ):
         self.language_id = language_id
@@ -54,11 +57,10 @@ class LspServer:
         """Starts the language server."""
         self.toolbox_api.lsp_start(
             workspace_id=self.instance.id,
-            project_id="main",
-            params={
-                "language_id": self.language_id,
-                "path_to_project": self.path_to_project,
-            },
+            lsp_server_request=LspServerRequest(
+                language_id=self.language_id,
+                path_to_project=self.path_to_project,
+            ),
         )
 
     def stop(self) -> None:
@@ -68,11 +70,10 @@ class LspServer:
         """
         self.toolbox_api.lsp_stop(
             workspace_id=self.instance.id,
-            project_id="main",
-            params={
-                "language_id": self.language_id,
-                "path_to_project": self.path_to_project,
-            },
+            lsp_server_request=LspServerRequest(
+                language_id=self.language_id,
+                path_to_project=self.path_to_project,
+            ),
         )
 
     def did_open(self, path: str) -> None:
@@ -86,12 +87,11 @@ class LspServer:
         """
         self.toolbox_api.lsp_did_open(
             workspace_id=self.instance.id,
-            project_id="main",
-            params={
-                "language_id": self.language_id,
-                "path_to_project": self.path_to_project,
-                "uri": f"file://{path}",
-            },
+            lsp_document_request=LspDocumentRequest(
+                language_id=self.language_id,
+                path_to_project=self.path_to_project,
+                uri=f"file://{path}",
+            ),
         )
 
     def did_close(self, path: str) -> None:
@@ -105,12 +105,11 @@ class LspServer:
         """
         self.toolbox_api.lsp_did_close(
             workspace_id=self.instance.id,
-            project_id="main",
-            params={
-                "language_id": self.language_id,
-                "path_to_project": self.path_to_project,
-                "uri": f"file://{path}",
-            },
+            lsp_document_request=LspDocumentRequest(
+                language_id=self.language_id,
+                path_to_project=self.path_to_project,
+                uri=f"file://{path}",
+            ),
         )
 
     def document_symbols(self, path: str) -> List[LspSymbol]:
@@ -124,7 +123,6 @@ class LspServer:
         """
         return self.toolbox_api.lsp_document_symbols(
             workspace_id=self.instance.id,
-            project_id="main",
             language_id=self.language_id,
             path_to_project=self.path_to_project,
             uri=f"file://{path}",
@@ -141,7 +139,6 @@ class LspServer:
         """
         return self.toolbox_api.lsp_workspace_symbols(
             workspace_id=self.instance.id,
-            project_id="main",
             language_id=self.language_id,
             path_to_project=self.path_to_project,
             query=query,
@@ -164,11 +161,10 @@ class LspServer:
         """
         return self.toolbox_api.lsp_completions(
             workspace_id=self.instance.id,
-            project_id="main",
-            params={
-                "language_id": self.language_id,
-                "path_to_project": self.path_to_project,
-                "uri": f"file://{path}",
-                "position": position,
-            },
+            lsp_completion_params=LspCompletionParams(
+                language_id=self.language_id,
+                path_to_project=self.path_to_project,
+                uri=f"file://{path}",
+                position=position,
+            ),
         )

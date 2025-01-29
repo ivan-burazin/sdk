@@ -1,10 +1,13 @@
 import os
-from daytona_sdk import Daytona
+from daytona_sdk import Daytona, CreateWorkspaceParams
 
 daytona = Daytona()
+params = CreateWorkspaceParams(
+  language="python",
+)
 
 # First, create a workspace
-workspace = daytona.create()
+workspace = daytona.create(params)
 
 # Get workspace root directory
 root_dir = workspace.get_workspace_root_dir()
@@ -38,7 +41,7 @@ print("File content:", downloaded_file.decode("utf-8"))
 workspace.fs.set_file_permissions(file_path, mode="777")
 
 # Get file info
-file_info = workspace.fs.get_file_details(file_path)
+file_info = workspace.fs.get_file_info(file_path)
 print("File info:", file_info)  # Should show the new permissions
 
 # Move the file to the new location
@@ -52,4 +55,4 @@ print("Search results:", search_results)
 # Delete the file
 workspace.fs.delete_file(new_file_path)
 
-daytona.remove(workspace)
+# daytona.remove(workspace)

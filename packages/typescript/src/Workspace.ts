@@ -1,16 +1,16 @@
-import { Workspace as WorkspaceInstance, WorkspaceToolboxApi } from './client'
+import { ToolboxApi, WorkspaceApi } from '@daytonaio/api-client'
+import { Workspace as WorkspaceInstance } from '@daytonaio/api-client'
 import { FileSystem } from './FileSystem'
 import { Git } from './Git'
-import { LspLanguageId, LspServer } from './LspServer'
+//  import { LspLanguageId, LspServer } from './LspServer'
 import { Process } from './Process'
+import { LspLanguageId, LspServer } from './LspServer'
 
 /**
  * Interface defining methods that a code toolbox must implement
  * @interface WorkspaceCodeToolbox
  */
 export interface WorkspaceCodeToolbox {
-  /** Gets the default Docker image for this language */
-  getDefaultImage(): string
   /** Generates a command to run the provided code */
   getRunCommand(code: string): string
 }
@@ -31,13 +31,16 @@ export class Workspace {
    * Creates a new workspace instance
    * @param {string} id - Unique identifier for the workspace
    * @param {WorkspaceInstance} instance - The underlying workspace instance
-   * @param {WorkspaceToolboxApi} toolboxApi - API client for workspace operations
+   * @param {WorkspaceApi} workspaceApi - API client for workspace operations
+   * @param {ToolboxApi} toolboxApi - API client for toolbox operations
+   * 
    * @param {WorkspaceCodeToolbox} codeToolbox - Language-specific toolbox implementation
    */
   constructor(
     public readonly id: string,
     private readonly instance: WorkspaceInstance,
-    public readonly toolboxApi: WorkspaceToolboxApi,
+    public readonly workspaceApi: WorkspaceApi,
+    public readonly toolboxApi: ToolboxApi,
     private readonly codeToolbox: WorkspaceCodeToolbox,
   ) {
     this.fs = new FileSystem(instance, this.toolboxApi)
@@ -49,12 +52,11 @@ export class Workspace {
    * Gets the root directory path of the workspace
    * @returns {Promise<string>} The absolute path to the workspace root
    */
-  public async getWorkspaceRootDir(): Promise<string> {
-    const response = await this.toolboxApi.getProjectDir({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-    })
-    return response.dir!
+  public async getWorkspaceRootDir(): Promise<string | undefined> {
+    const response = await this.toolboxApi.getProjectDir(
+      this.instance.id,
+    )
+    return response.data.dir
   }
 
   /**

@@ -10,7 +10,6 @@ setup(
     ],
     # Include both packages
     package_data={
-        "daytona_sdk": ["*"],
-        "apiclient": ["*"],
+        "daytona_sdk": ["*"]
     },
 )

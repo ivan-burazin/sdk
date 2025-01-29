@@ -1,10 +1,9 @@
 import {
-  GitStatus,
-  ListBranchResponse,
-  Match,
   Workspace as WorkspaceInstance,
-  WorkspaceToolboxApi,
-} from './client'
+  ToolboxApi,
+  ListBranchResponse,
+  GitStatus,
+} from '@daytonaio/api-client'
 import { Workspace } from './Workspace'
 
 /**
@@ -14,7 +13,7 @@ import { Workspace } from './Workspace'
 export class Git {
   constructor(
     private readonly workspace: Workspace,
-    private readonly toolboxApi: WorkspaceToolboxApi,
+    private readonly toolboxApi: ToolboxApi,
     private readonly instance: WorkspaceInstance,
   ) {}
 
@@ -25,13 +24,9 @@ export class Git {
    * @returns {Promise<void>}
    */
   public async add(path: string, files: string[]): Promise<void> {
-    await this.toolboxApi.gitAddFiles({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      params: {
-        path,
-        files,
-      },
+    await this.toolboxApi.gitAddFiles(this.instance.id, {
+      path,
+      files,
     })
   }
 
@@ -41,11 +36,8 @@ export class Git {
    * @returns {Promise<ListBranchResponse>} List of branches
    */
   public async branches(path: string): Promise<ListBranchResponse> {
-    return await this.toolboxApi.gitBranchList({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      path,
-    })
+    const response = await this.toolboxApi.gitListBranches(this.instance.id, path)
+    return response.data
   }
 
   /**
@@ -66,18 +58,15 @@ export class Git {
     username?: string,
     password?: string,
   ): Promise<void> {
-    await this.toolboxApi.gitCloneRepository({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      params: {
+    await this.toolboxApi.gitCloneRepository(this.instance.id, {
         url: url,
         branch: branch,
         path,
         username,
         password,
-        commitId,
+        commit_id: commitId
       },
-    })
+    )
   }
 
   /**
@@ -94,15 +83,11 @@ export class Git {
     author: string,
     email: string,
   ): Promise<void> {
-    await this.toolboxApi.gitCommitChanges({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      params: {
-        path,
-        message,
-        author,
-        email,
-      },
+    await this.toolboxApi.gitCommitChanges(this.instance.id, {
+      path,
+      message,
+      author,
+      email,
     })
   }
 
@@ -118,14 +103,10 @@ export class Git {
     username?: string,
     password?: string,
   ): Promise<void> {
-    await this.toolboxApi.gitPushChanges({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      params: {
-        path,
-        username,
-        password,
-      },
+    await this.toolboxApi.gitPushChanges(this.instance.id, {
+      path,
+      username,
+      password,
     })
   }
 
@@ -141,14 +122,10 @@ export class Git {
     username?: string,
     password?: string,
   ): Promise<void> {
-    await this.toolboxApi.gitPullChanges({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      params: {
-        path,
-        username,
-        password,
-      },
+    await this.toolboxApi.gitPullChanges(this.instance.id, {
+      path,
+      username,
+      password,
     })
   }
 
@@ -158,10 +135,7 @@ export class Git {
    * @returns {Promise<GitStatus>} Repository status information
    */
   public async status(path: string): Promise<GitStatus> {
-    return await this.toolboxApi.gitGitStatus({
-      workspaceId: this.instance.id,
-      projectId: 'main', //  todo: remove this after project refactor
-      path,
-    })
+    const response = await this.toolboxApi.gitGetStatus(this.instance.id, path)
+    return response.data
   }
 }

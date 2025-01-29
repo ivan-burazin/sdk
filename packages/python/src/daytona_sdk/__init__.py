@@ -4,7 +4,16 @@ from .daytona import (
     CreateWorkspaceParams,
     CodeLanguage,
     Workspace,
+    SessionExecuteRequest,
+    SessionExecuteResponse,
 )
 
-__all__ = ["Daytona", "DaytonaConfig",
-           "CreateWorkspaceParams", "CodeLanguage", "Workspace"]
+__all__ = [
+    "Daytona",
+    "DaytonaConfig",
+    "CreateWorkspaceParams",
+    "CodeLanguage",
+    "Workspace",
+    "SessionExecuteRequest",
+    "SessionExecuteResponse"
+]

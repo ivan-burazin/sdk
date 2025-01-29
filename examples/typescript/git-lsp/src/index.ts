@@ -11,8 +11,12 @@ async function main() {
 
   try {
     const rootDir = await workspace.getWorkspaceRootDir()
-    const projectDir = path.join(rootDir, 'learn-typescript')
+    if (!rootDir) {
+      throw new Error('Failed to get workspace root directory')
+    }
 
+    const projectDir = path.join(rootDir, 'learn-typescript')
+    
     //  clone the repository
     await workspace.git.clone(
       'https://github.com/panaverse/learn-typescript',

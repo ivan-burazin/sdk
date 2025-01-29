@@ -1,4 +1,4 @@
-[Daytona TypeScript SDK - v0.1.3](../README.md) / Git
+[Daytona TypeScript SDK - v0.7.0](../README.md) / Git
 
 # Class: Git
 
@@ -32,7 +32,7 @@ Provides Git operations within a workspace
 | Name | Type |
 | :------ | :------ |
 | `workspace` | [`Workspace`](Workspace.md) |
-| `toolboxApi` | `WorkspaceToolboxApi` |
+| `toolboxApi` | `ToolboxApi` |
 | `instance` | `Workspace` |
 
 #### Returns
@@ -41,7 +41,7 @@ Provides Git operations within a workspace
 
 #### Defined in
 
-[Git.ts:15](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/Git.ts#L15)
+[Git.ts:14](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Git.ts#L14)
 
 ## Methods
 
@@ -64,13 +64,13 @@ Stages files for commit
 
 #### Defined in
 
-[Git.ts:27](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/Git.ts#L27)
+[Git.ts:26](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Git.ts#L26)
 
 ___
 
 ### branches
 
-▸ **branches**(`path`): `Promise`\<[`ListBranchResponse`](../interfaces/ListBranchResponse.md)\>
+▸ **branches**(`path`): `Promise`\<`ListBranchResponse`\>
 
 Lists branches in the repository
 
@@ -82,13 +82,13 @@ Lists branches in the repository
 
 #### Returns
 
-`Promise`\<[`ListBranchResponse`](../interfaces/ListBranchResponse.md)\>
+`Promise`\<`ListBranchResponse`\>
 
 List of branches
 
 #### Defined in
 
-[Git.ts:43](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/Git.ts#L43)
+[Git.ts:38](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Git.ts#L38)
 
 ___
 
@@ -115,7 +115,7 @@ Clones a Git repository
 
 #### Defined in
 
-[Git.ts:61](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/Git.ts#L61)
+[Git.ts:53](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Git.ts#L53)
 
 ___
 
@@ -140,7 +140,7 @@ Creates a new commit with staged changes
 
 #### Defined in
 
-[Git.ts:91](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/Git.ts#L91)
+[Git.ts:80](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Git.ts#L80)
 
 ___
 
@@ -164,7 +164,7 @@ Pulls changes from remote repository
 
 #### Defined in
 
-[Git.ts:139](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/Git.ts#L139)
+[Git.ts:120](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Git.ts#L120)
 
 ___
 
@@ -188,13 +188,13 @@ Pushes local commits to remote repository
 
 #### Defined in
 
-[Git.ts:116](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/Git.ts#L116)
+[Git.ts:101](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Git.ts#L101)
 
 ___
 
 ### status
 
-▸ **status**(`path`): `Promise`\<[`GitStatus`](../interfaces/GitStatus.md)\>
+▸ **status**(`path`): `Promise`\<`GitStatus`\>
 
 Gets the current Git repository status
 
@@ -206,10 +206,10 @@ Gets the current Git repository status
 
 #### Returns
 
-`Promise`\<[`GitStatus`](../interfaces/GitStatus.md)\>
+`Promise`\<`GitStatus`\>
 
 Repository status information
 
 #### Defined in
 
-[Git.ts:160](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/Git.ts#L160)
+[Git.ts:137](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Git.ts#L137)

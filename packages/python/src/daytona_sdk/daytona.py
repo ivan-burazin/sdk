@@ -4,24 +4,26 @@ Daytona SDK for Python
 This module provides the main entry point for interacting with Daytona Server API.
 """
 
-import os
 import uuid
 import json
 from typing import Optional, Literal, Dict, Any
 from dataclasses import dataclass
 from environs import Env
 import time
+from daytona_api_client import (
+    Configuration,
+    WorkspaceApi,
+    ToolboxApi,
+    ApiClient,
+    CreateWorkspace,
+    SessionExecuteRequest,
+    SessionExecuteResponse
+)
 
 from .code_toolbox.workspace_python_code_toolbox import WorkspacePythonCodeToolbox
 from .code_toolbox.workspace_ts_code_toolbox import WorkspaceTsCodeToolbox
 from .workspace import Workspace
-from api_client import (
-    Configuration,
-    WorkspaceApi,
-    GitProviderApi,
-    WorkspaceToolboxApi,
-    ApiClient,
-)
+
 
 # Type definitions
 CodeLanguage = Literal["python", "javascript", "typescript"]
@@ -40,23 +42,27 @@ class DaytonaConfig:
     server_url: str
     target: str
 
+@dataclass
+class WorkspaceResources:
+    """Resources configuration for workspace"""
+    cpu: Optional[int] = None
+    memory: Optional[int] = None  # in MB
+    disk: Optional[int] = None    # in GB
+    gpu: Optional[int] = None
 
 @dataclass
 class CreateWorkspaceParams:
-    """Parameters for creating a new workspace.
-    
-    Args:
-        id: Optional workspace ID. If not provided, a random ID will be generated
-        image: Optional Docker image to use for the workspace
-        language: Programming language to use in the workspace
-        os_user: Optional OS user for the workspace image
-    """
+    """Parameters for creating a new workspace."""
     language: CodeLanguage
     id: Optional[str] = None
+    name: Optional[str] = None
     image: Optional[str] = None
     os_user: Optional[str] = None
     env_vars: Optional[Dict[str, str]] = None
-    # labels: Optional[Dict[str, str]] = None
+    labels: Optional[Dict[str, str]] = None
+    public: Optional[bool] = None
+    target: Optional[str] = None
+    resources: Optional[WorkspaceResources] = None
 
 
 class Daytona:
@@ -98,9 +104,8 @@ class Daytona:
         api_client.default_headers["Authorization"] = f"Bearer {self.api_key}"
 
         # Initialize API clients with the api_client instance
-        self.git_provider_api = GitProviderApi(api_client)
         self.workspace_api = WorkspaceApi(api_client)
-        self.toolbox_api = WorkspaceToolboxApi(api_client)
+        self.toolbox_api = ToolboxApi(api_client)
 
     def _wait_for_workspace_start(self, workspace_id: str) -> None:
         """Wait for workspace to reach 'started' state.
@@ -112,17 +117,17 @@ class Daytona:
             Exception: If workspace fails to start or metadata is missing
         """
         workspace_check = self.workspace_api.get_workspace(workspace_id=workspace_id)
-        if not workspace_check.projects[0].info.provider_metadata:
+        if not workspace_check.info.provider_metadata:
             raise Exception("Provider metadata is missing")
         
-        provider_metadata = json.loads(workspace_check.projects[0].info.provider_metadata)
+        provider_metadata = json.loads(workspace_check.info.provider_metadata)
         current_state = provider_metadata.get('state')
         while current_state in ["unknown", "pulling_image", "creating", "stopped", "starting"]:
             time.sleep(0.1)
             workspace_check = self.workspace_api.get_workspace(workspace_id=workspace_id)
-            if not workspace_check.projects[0].info.provider_metadata:
+            if not workspace_check.info.provider_metadata:
                 raise Exception("Provider metadata is missing during status check")
-            provider_metadata = json.loads(workspace_check.projects[0].info.provider_metadata)
+            provider_metadata = json.loads(workspace_check.info.provider_metadata)
             current_state = provider_metadata.get('state')
             
         if current_state != "started":
@@ -172,41 +177,25 @@ class Daytona:
         code_toolbox = self._get_code_toolbox(params)
 
         try:
-            # Create project as a dictionary
-            project = {
-                "name": "main",
-                "image": params.image if params.image else code_toolbox.get_default_image(),
-                "osUser": (
-                    params.os_user if params.os_user
-                    else "daytona" if code_toolbox.get_default_image() 
-                    else "root"
-                ),
-                "env_vars": params.env_vars if params.env_vars else {},
-                "source": {
-                    "repository": {
-                        "branch": "main",
-                        "clone_target": "branch",
-                        "id": "python-helloworld",
-                        "name": "python-helloworld",
-                        "owner": "dbarnett",
-                        "path": None,
-                        "pr_number": None,
-                        "sha": "288d7ced1b971fd1b3b0c36002b96e1c3f91542e",
-                        "source": "github.com",
-                        "url": "https://github.com/dbarnett/python-helloworld.git",
-                    }
-                },
-            }
-
             # Create workspace using dictionary
-            workspace_data = {
-                "id": workspace_id,
-                "name": workspace_id,
-                "projects": [project],
-                "target": self.target,
-            }
+            workspace_data = CreateWorkspace(
+                id=workspace_id,
+                name=params.name if params.name else workspace_id,
+                image=params.image,
+                user=params.os_user if params.os_user else "daytona",
+                env_vars=params.env_vars if params.env_vars else {},
+                labels=params.labels,
+                public=params.public,
+                target=params.target if params.target else self.target,
+            )
 
-            response = self.workspace_api.create_workspace(workspace=workspace_data)
+            if params.resources:
+                workspace_data.cpu = params.resources.cpu
+                workspace_data.memory = params.resources.memory
+                workspace_data.disk = params.resources.disk
+                workspace_data.gpu = params.resources.gpu
+
+            response = self.workspace_api.create_workspace(create_workspace=workspace_data)
             workspace = Workspace(workspace_id, response, self.toolbox_api, code_toolbox)
 
             # Wait for workspace to start
@@ -251,7 +240,7 @@ class Daytona:
         Args:
             workspace: The workspace to remove
         """
-        return self.workspace_api.remove_workspace(workspace_id=workspace.id)
+        return self.workspace_api.delete_workspace(workspace_id=workspace.id, force=True)
 
     def get_current_workspace(self, workspace_id: str) -> Workspace:
         """
@@ -295,3 +284,14 @@ class Daytona:
         """
         self.workspace_api.stop_workspace(workspace_id=workspace.id)
         self._wait_for_workspace_stop(workspace.id)
+
+# Export these at module level
+__all__ = [
+    "Daytona",
+    "DaytonaConfig",
+    "CreateWorkspaceParams",
+    "CodeLanguage",
+    "Workspace",
+    "SessionExecuteRequest",
+    "SessionExecuteResponse"
+]

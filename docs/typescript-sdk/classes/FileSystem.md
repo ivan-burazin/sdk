@@ -1,4 +1,4 @@
-[Daytona TypeScript SDK - v0.1.3](../README.md) / FileSystem
+[Daytona TypeScript SDK - v0.7.0](../README.md) / FileSystem
 
 # Class: FileSystem
 
@@ -36,7 +36,7 @@ Provides file system operations within a workspace
 | Name | Type |
 | :------ | :------ |
 | `instance` | `Workspace` |
-| `toolboxApi` | `WorkspaceToolboxApi` |
+| `toolboxApi` | `ToolboxApi` |
 
 #### Returns
 
@@ -44,7 +44,7 @@ Provides file system operations within a workspace
 
 #### Defined in
 
-[FileSystem.ts:29](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/FileSystem.ts#L29)
+[FileSystem.ts:29](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/FileSystem.ts#L29)
 
 ## Methods
 
@@ -67,7 +67,7 @@ Creates a new folder in the workspace
 
 #### Defined in
 
-[FileSystem.ts:40](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/FileSystem.ts#L40)
+[FileSystem.ts:40](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/FileSystem.ts#L40)
 
 ___
 
@@ -89,7 +89,7 @@ Deletes a file from the workspace
 
 #### Defined in
 
-[FileSystem.ts:54](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/FileSystem.ts#L54)
+[FileSystem.ts:50](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/FileSystem.ts#L50)
 
 ___
 
@@ -113,13 +113,13 @@ The file contents as a Blob
 
 #### Defined in
 
-[FileSystem.ts:67](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/FileSystem.ts#L67)
+[FileSystem.ts:60](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/FileSystem.ts#L60)
 
 ___
 
 ### findFiles
 
-▸ **findFiles**(`path`, `pattern`): `Promise`\<[`Match`](../interfaces/Match.md)[]\>
+▸ **findFiles**(`path`, `pattern`): `Promise`\<`Match`[]\>
 
 Searches for files matching a pattern
 
@@ -132,19 +132,19 @@ Searches for files matching a pattern
 
 #### Returns
 
-`Promise`\<[`Match`](../interfaces/Match.md)[]\>
+`Promise`\<`Match`[]\>
 
 Array of matching files
 
 #### Defined in
 
-[FileSystem.ts:81](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/FileSystem.ts#L81)
+[FileSystem.ts:71](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/FileSystem.ts#L71)
 
 ___
 
 ### getFileDetails
 
-▸ **getFileDetails**(`path`): `Promise`\<[`FileInfo`](../interfaces/FileInfo.md)\>
+▸ **getFileDetails**(`path`): `Promise`\<`FileInfo`\>
 
 Gets details about a file
 
@@ -156,19 +156,19 @@ Gets details about a file
 
 #### Returns
 
-`Promise`\<[`FileInfo`](../interfaces/FileInfo.md)\>
+`Promise`\<`FileInfo`\>
 
 File information
 
 #### Defined in
 
-[FileSystem.ts:95](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/FileSystem.ts#L95)
+[FileSystem.ts:81](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/FileSystem.ts#L81)
 
 ___
 
 ### listFiles
 
-▸ **listFiles**(`path`): `Promise`\<[`FileInfo`](../interfaces/FileInfo.md)[]\>
+▸ **listFiles**(`path`): `Promise`\<`FileInfo`[]\>
 
 Lists files in a directory
 
@@ -180,13 +180,13 @@ Lists files in a directory
 
 #### Returns
 
-`Promise`\<[`FileInfo`](../interfaces/FileInfo.md)[]\>
+`Promise`\<`FileInfo`[]\>
 
 Array of file information
 
 #### Defined in
 
-[FileSystem.ts:108](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/FileSystem.ts#L108)
+[FileSystem.ts:91](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/FileSystem.ts#L91)
 
 ___
 
@@ -209,13 +209,13 @@ Moves/renames files
 
 #### Defined in
 
-[FileSystem.ts:122](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/FileSystem.ts#L122)
+[FileSystem.ts:102](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/FileSystem.ts#L102)
 
 ___
 
 ### replaceInFiles
 
-▸ **replaceInFiles**(`files`, `pattern`, `newValue`): `Promise`\<[`ReplaceResult`](../interfaces/ReplaceResult.md)[]\>
+▸ **replaceInFiles**(`files`, `pattern`, `newValue`): `Promise`\<`ReplaceResult`[]\>
 
 Replaces text in multiple files
 
@@ -229,19 +229,19 @@ Replaces text in multiple files
 
 #### Returns
 
-`Promise`\<[`ReplaceResult`](../interfaces/ReplaceResult.md)[]\>
+`Promise`\<`ReplaceResult`[]\>
 
 Results of the replace operation
 
 #### Defined in
 
-[FileSystem.ts:138](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/FileSystem.ts#L138)
+[FileSystem.ts:114](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/FileSystem.ts#L114)
 
 ___
 
 ### searchFiles
 
-▸ **searchFiles**(`path`, `pattern`): `Promise`\<[`SearchFilesResponse`](../interfaces/SearchFilesResponse.md)\>
+▸ **searchFiles**(`path`, `pattern`): `Promise`\<`SearchFilesResponse`\>
 
 Searches for files by name pattern
 
@@ -254,13 +254,13 @@ Searches for files by name pattern
 
 #### Returns
 
-`Promise`\<[`SearchFilesResponse`](../interfaces/SearchFilesResponse.md)\>
+`Promise`\<`SearchFilesResponse`\>
 
 Search results
 
 #### Defined in
 
-[FileSystem.ts:162](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/FileSystem.ts#L162)
+[FileSystem.ts:135](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/FileSystem.ts#L135)
 
 ___
 
@@ -283,7 +283,7 @@ Sets file permissions
 
 #### Defined in
 
-[FileSystem.ts:180](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/FileSystem.ts#L180)
+[FileSystem.ts:149](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/FileSystem.ts#L149)
 
 ___
 
@@ -298,7 +298,7 @@ Uploads a file to the workspace
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `path` | `string` | Destination path |
-| `file` | `Blob` | File contents to upload |
+| `file` | `File` | File contents to upload |
 
 #### Returns
 
@@ -306,4 +306,4 @@ Uploads a file to the workspace
 
 #### Defined in
 
-[FileSystem.ts:200](https://github.com/daytonaio/sdk/blob/b45168f061cd6be86cb18d4f6da11d28c59292bf/packages/typescript/src/FileSystem.ts#L200)
+[FileSystem.ts:163](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/FileSystem.ts#L163)

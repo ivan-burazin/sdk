@@ -1,5 +1,5 @@
 import {
-  CreateSessionRequest,
+  Command,
   ExecuteResponse,
   Session,
   SessionExecuteRequest,
@@ -25,13 +25,15 @@ export class Process {
    * @param {string} command - Command to execute
    * @returns {Promise<ExecuteResponse>} Command execution results
    */
-  public async processExecuteCommand(
+  public async executeCommand(
     command: string,
+    cwd?: string,
     timeout?: number
   ): Promise<ExecuteResponse> {
     const response = await this.toolboxApi.executeCommand(this.instance.id, {
       command,
       timeout,
+      cwd,
     })
 
     return response.data
@@ -69,7 +71,7 @@ export class Process {
    * @param {SessionExecuteRequest} req - Command to execute and async flag
    * @returns {Promise<SessionExecuteResponse>} Command execution results
    */
-  public async executeSession(sessionId: string, req: SessionExecuteRequest): Promise<SessionExecuteResponse> {
+  public async executeSessionCommand(sessionId: string, req: SessionExecuteRequest): Promise<SessionExecuteResponse> {
     const response = await this.toolboxApi.executeSessionCommand(this.instance.id, sessionId, req)
     return response.data
   }
@@ -80,8 +82,29 @@ export class Process {
    * @param {string} commandId - Unique identifier for the command
    * @returns {Promise<string>} Command logs
    */
-  public async getExecuteSessionCommandLogs(sessionId: string, commandId: string): Promise<string> {
+  public async getSessionCommandLogs(sessionId: string, commandId: string): Promise<string> {
     const response = await this.toolboxApi.getSessionCommandLogs(this.instance.id, sessionId, commandId)
+    return response.data
+  }
+
+  /**
+   * Gets the session
+   * @param {string} sessionId - Unique identifier for the session
+   * @returns {Promise<Session>} Session
+   */
+  public async getSession(sessionId: string): Promise<Session> {
+    const response = await this.toolboxApi.getSession(this.instance.id, sessionId)
+    return response.data
+  }
+
+  /**
+   * Gets the session command
+   * @param {string} sessionId - Unique identifier for the session
+   * @param {string} commandId - Unique identifier for the command
+   * @returns {Promise<Command>} Session command
+   */
+  public async getSessionCommand(sessionId: string, commandId: string): Promise<Command> {
+    const response = await this.toolboxApi.getSessionCommand(this.instance.id, sessionId, commandId)
     return response.data
   }
 

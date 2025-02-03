@@ -6,7 +6,7 @@ This module provides the main entry point for interacting with Daytona Server AP
 
 import uuid
 import json
-from typing import Optional, Literal, Dict, Any
+from typing import Optional, Literal, Dict, Any, List
 from dataclasses import dataclass
 from environs import Env
 import time
@@ -107,58 +107,6 @@ class Daytona:
         self.workspace_api = WorkspaceApi(api_client)
         self.toolbox_api = ToolboxApi(api_client)
 
-    def _wait_for_workspace_start(self, workspace_id: str) -> None:
-        """Wait for workspace to reach 'started' state.
-        
-        Args:
-            workspace_id: The ID of the workspace to check
-            
-        Raises:
-            Exception: If workspace fails to start or metadata is missing
-        """
-        workspace_check = self.workspace_api.get_workspace(workspace_id=workspace_id)
-        if not workspace_check.info.provider_metadata:
-            raise Exception("Provider metadata is missing")
-        
-        provider_metadata = json.loads(workspace_check.info.provider_metadata)
-        current_state = provider_metadata.get('state')
-        while current_state in ["unknown", "pulling_image", "creating", "stopped", "starting"]:
-            time.sleep(0.1)
-            workspace_check = self.workspace_api.get_workspace(workspace_id=workspace_id)
-            if not workspace_check.info.provider_metadata:
-                raise Exception("Provider metadata is missing during status check")
-            provider_metadata = json.loads(workspace_check.info.provider_metadata)
-            current_state = provider_metadata.get('state')
-            
-        if current_state != "started":
-            raise Exception(f"Workspace failed to start. Current state: {current_state}")
-
-    def _wait_for_workspace_stop(self, workspace_id: str) -> None:
-        """Wait for workspace to reach 'stopped' state.
-        
-        Args:
-            workspace_id: The ID of the workspace to check
-            
-        Raises:
-            Exception: If workspace fails to stop or metadata is missing
-        """
-        workspace_check = self.workspace_api.get_workspace(workspace_id=workspace_id)
-        if not workspace_check.projects[0].info.provider_metadata:
-            raise Exception("Provider metadata is missing")
-        
-        provider_metadata = json.loads(workspace_check.projects[0].info.provider_metadata)
-        current_state = provider_metadata.get('state')
-        while current_state in ["started", "stopping"]:
-            time.sleep(0.1)
-            workspace_check = self.workspace_api.get_workspace(workspace_id=workspace_id)
-            if not workspace_check.projects[0].info.provider_metadata:
-                raise Exception("Provider metadata is missing during status check")
-            provider_metadata = json.loads(workspace_check.projects[0].info.provider_metadata)
-            current_state = provider_metadata.get('state')
-            
-        if current_state != "stopped":
-            raise Exception(f"Workspace failed to stop. Current state: {current_state}")
-
     def create(self, params: Optional[CreateWorkspaceParams] = None) -> Workspace:
         """Creates a new workspace and waits for it to start.
         
@@ -196,11 +144,17 @@ class Daytona:
                 workspace_data.gpu = params.resources.gpu
 
             response = self.workspace_api.create_workspace(create_workspace=workspace_data)
-            workspace = Workspace(workspace_id, response, self.toolbox_api, code_toolbox)
+            workspace = Workspace(
+                workspace_id,
+                response,
+                self.workspace_api,
+                self.toolbox_api,
+                code_toolbox
+            )
 
             # Wait for workspace to start
             try:
-                self._wait_for_workspace_start(workspace.id)
+                workspace.wait_for_workspace_start()
             finally:
                 # If not Daytona SaaS, we don't need to handle pulling image state
                 pass
@@ -264,8 +218,59 @@ class Daytona:
         # Create and return workspace with Python code toolbox as default
         code_toolbox = WorkspacePythonCodeToolbox()
         return Workspace(
-            workspace_id, workspace_instance, self.toolbox_api, code_toolbox
+            workspace_id,
+            workspace_instance,
+            self.workspace_api,
+            self.toolbox_api,
+            code_toolbox
         )
+    
+    def list(self) -> List[Workspace]:
+        """List all workspaces."""
+        workspaces = self.workspace_api.list_workspaces()
+        return [
+            Workspace(
+                workspace.id,
+                workspace,
+                self.workspace_api,
+                self.toolbox_api,
+                self._get_code_toolbox(
+                    CreateWorkspaceParams(
+                        language=self._validate_language_label(workspace.labels.get("code-toolbox-language"))
+                    )
+                )
+            )
+            for workspace in workspaces
+        ]
+
+    def _validate_language_label(self, language: Optional[str]) -> CodeLanguage:
+        """Validate the code-toolbox-language label.
+        
+        Args:
+            language: The language label to validate
+            
+        Returns:
+            CodeLanguage: The validated language, defaults to "python" if None
+            
+        Raises:
+            ValueError: If the language is not supported
+        """
+        if not language:
+            return "python"
+        
+        if language not in ["python", "javascript", "typescript"]:
+            raise ValueError(f"Invalid code-toolbox-language: {language}")
+            
+        return language  # type: ignore
+    
+    # def resize(self, workspace: Workspace, resources: WorkspaceResources) -> None:
+    #     """Resizes a workspace.
+        
+    #     Args:
+    #         workspace: The workspace to resize
+    #         resources: The new resources to set
+    #     """
+    #     self.workspace_api. (workspace_id=workspace.id, resources=resources)
     
     def start(self, workspace: Workspace) -> None:
         """Starts a workspace and waits for it to be ready.
@@ -273,8 +278,8 @@ class Daytona:
         Args:
             workspace: The workspace to start
         """
-        self.workspace_api.start_workspace(workspace_id=workspace.id)
-        self._wait_for_workspace_start(workspace.id)
+        workspace.start()
+        workspace.wait_for_workspace_start()
     
     def stop(self, workspace: Workspace) -> None:
         """Stops a workspace and waits for it to be stopped.
@@ -282,8 +287,8 @@ class Daytona:
         Args:
             workspace: The workspace to stop
         """
-        self.workspace_api.stop_workspace(workspace_id=workspace.id)
-        self._wait_for_workspace_stop(workspace.id)
+        workspace.stop()
+        workspace.wait_for_workspace_stop()
 
 # Export these at module level
 __all__ = [

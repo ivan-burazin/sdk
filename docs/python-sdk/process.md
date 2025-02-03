@@ -5,8 +5,10 @@
     * [exec](#daytona_sdk.process.Process.exec)
     * [code\_run](#daytona_sdk.process.Process.code_run)
     * [create\_session](#daytona_sdk.process.Process.create_session)
-    * [execute\_session](#daytona_sdk.process.Process.execute_session)
-    * [get\_execute\_session\_command\_logs](#daytona_sdk.process.Process.get_execute_session_command_logs)
+    * [get\_session](#daytona_sdk.process.Process.get_session)
+    * [get\_session\_command](#daytona_sdk.process.Process.get_session_command)
+    * [execute\_session\_command](#daytona_sdk.process.Process.execute_session_command)
+    * [get\_session\_command\_logs](#daytona_sdk.process.Process.get_session_command_logs)
     * [list\_sessions](#daytona_sdk.process.Process.list_sessions)
     * [delete\_session](#daytona_sdk.process.Process.delete_session)
 
@@ -27,7 +29,7 @@ in the workspace environment.
 class Process()
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/process.py#L22)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/python/src/daytona_sdk/process.py#L23)
 
 Handles process and code execution within a workspace.
 
@@ -47,7 +49,7 @@ def exec(command: str,
          timeout: Optional[int] = None) -> ExecuteResponse
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/process.py#L41)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/python/src/daytona_sdk/process.py#L42)
 
 Executes a shell command in the workspace.
 
@@ -70,7 +72,7 @@ Executes a shell command in the workspace.
 def code_run(code: str) -> ExecuteResponse
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/process.py#L63)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/python/src/daytona_sdk/process.py#L64)
 
 Executes code in the workspace using the appropriate language runtime.
 
@@ -91,7 +93,7 @@ Executes code in the workspace using the appropriate language runtime.
 def create_session(session_id: str) -> None
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/process.py#L75)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/python/src/daytona_sdk/process.py#L76)
 
 Creates a new exec session in the workspace.
 
@@ -99,16 +101,59 @@ Creates a new exec session in the workspace.
 
 - `session_id` - Unique identifier for the session
 
-<a id="daytona_sdk.process.Process.execute_session"></a>
+<a id="daytona_sdk.process.Process.get_session"></a>
 
-#### execute\_session
+#### get\_session
 
 ```python
-def execute_session(session_id: str,
-                    req: SessionExecuteRequest) -> SessionExecuteResponse
+def get_session(session_id: str) -> Session
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/process.py#L87)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/python/src/daytona_sdk/process.py#L88)
+
+Gets a session in the workspace.
+
+**Arguments**:
+
+- `session_id` - Unique identifier for the session
+  
+
+**Returns**:
+
+  Session
+
+<a id="daytona_sdk.process.Process.get_session_command"></a>
+
+#### get\_session\_command
+
+```python
+def get_session_command(session_id: str, command_id: str) -> Command
+```
+
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/python/src/daytona_sdk/process.py#L102)
+
+Gets a command in the session.
+
+**Arguments**:
+
+- `session_id` - Unique identifier for the session
+- `command_id` - Unique identifier for the command
+  
+
+**Returns**:
+
+  Command
+
+<a id="daytona_sdk.process.Process.execute_session_command"></a>
+
+#### execute\_session\_command
+
+```python
+def execute_session_command(
+        session_id: str, req: SessionExecuteRequest) -> SessionExecuteResponse
+```
+
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/python/src/daytona_sdk/process.py#L118)
 
 Executes a command in the session.
 
@@ -122,15 +167,15 @@ Executes a command in the session.
 
   Command execution results
 
-<a id="daytona_sdk.process.Process.get_execute_session_command_logs"></a>
+<a id="daytona_sdk.process.Process.get_session_command_logs"></a>
 
-#### get\_execute\_session\_command\_logs
+#### get\_session\_command\_logs
 
 ```python
-def get_execute_session_command_logs(session_id: str, command_id: str) -> str
+def get_session_command_logs(session_id: str, command_id: str) -> str
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/process.py#L103)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/python/src/daytona_sdk/process.py#L134)
 
 Gets the logs for a command in the session.
 
@@ -152,7 +197,7 @@ Gets the logs for a command in the session.
 def list_sessions() -> List[Session]
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/process.py#L119)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/python/src/daytona_sdk/process.py#L150)
 
 Lists all sessions in the workspace.
 
@@ -168,7 +213,7 @@ Lists all sessions in the workspace.
 def delete_session(session_id: str) -> None
 ```
 
-[[view_source]](https://github.com/daytonaio/daytona-client/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/python/src/daytona_sdk/process.py#L129)
+[[view_source]](https://github.com/daytonaio/daytona-client/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/python/src/daytona_sdk/process.py#L160)
 
 Deletes a session in the workspace.
 

@@ -7,6 +7,54 @@ import { Process } from './Process'
 import { LspLanguageId, LspServer } from './LspServer'
 
 /**
+ * Resources allocated to a workspace
+ * @interface WorkspaceResources
+ */
+export interface WorkspaceResources {
+  /** CPU allocation */
+  cpu: string;
+  /** GPU allocation */
+  gpu: string | null;
+  /** Memory allocation */
+  memory: string;
+  /** Disk allocation */
+  disk: string;
+}
+
+/**
+ * Structured information about a workspace
+ * @interface WorkspaceInfo
+ */
+export interface WorkspaceInfo {
+  /** Unique identifier */
+  id: string;
+  /** Workspace name */
+  name: string;
+  /** Docker image */
+  image: string;
+  /** OS user */
+  user: string;
+  /** Environment variables */
+  env: Record<string, string>;
+  /** Workspace labels */
+  labels: Record<string, string>;
+  /** Public access flag */
+  public: boolean;
+  /** Target location */
+  target: string;
+  /** Resource allocations */
+  resources: WorkspaceResources;
+  /** Current state */
+  state: string;
+  /** Error reason if any */
+  errorReason: string | null;
+  /** Snapshot state */
+  snapshotState: string | null;
+  /** Snapshot state creation timestamp */
+  snapshotStateCreatedAt: Date | null;
+}
+
+/**
  * Interface defining methods that a code toolbox must implement
  * @interface WorkspaceCodeToolbox
  */
@@ -38,7 +86,7 @@ export class Workspace {
    */
   constructor(
     public readonly id: string,
-    private readonly instance: WorkspaceInstance,
+    public readonly instance: WorkspaceInstance,
     public readonly workspaceApi: WorkspaceApi,
     public readonly toolboxApi: ToolboxApi,
     private readonly codeToolbox: WorkspaceCodeToolbox,
@@ -75,5 +123,122 @@ export class Workspace {
       this.toolboxApi,
       this.instance,
     )
+  }
+
+  /**
+   * Sets labels for the workspace
+   * @param {Record<string, string>} labels - The labels to set
+   */
+  public async setLabels(labels: Record<string, string>): Promise<void> {
+    await this.workspaceApi.replaceLabels(this.instance.id, { labels })
+  }
+  
+  /**
+   * Starts the workspace
+   * @returns {Promise<void>}
+   */
+  public async start(): Promise<void> {
+    await this.workspaceApi.startWorkspace(this.instance.id)
+    await this.waitUntilStarted()
+  }
+
+  /**
+   * Stops the workspace
+   * @returns {Promise<void>}
+   */
+  public async stop(): Promise<void> {
+    await this.workspaceApi.stopWorkspace(this.instance.id)
+    await this.waitUntilStopped()
+  }
+
+  /**
+   * Deletes the workspace
+   * @returns {Promise<void>}
+   */
+  public async delete(): Promise<void> {
+    await this.workspaceApi.deleteWorkspace(this.instance.id, true)
+  }
+
+  public async waitUntilStarted() {
+    const maxAttempts = 600;
+    let attempts = 0;
+
+    while (attempts < maxAttempts) {
+      const response = await this.workspaceApi.getWorkspace(this.id);
+      const state = response.data.state;
+
+      if (state === 'started') {
+        return;
+      }
+
+      if (state === 'error') {
+        throw new Error(`Workspace failed to start with status: ${status}`);
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 100)); // Wait 100 ms between checks
+      attempts++;
+    }
+
+    throw new Error('Workspace failed to become ready within the timeout period');
+  }
+
+  public async waitUntilStopped() {
+    const maxAttempts = 600;
+    let attempts = 0;
+
+    while (attempts < maxAttempts) {
+      const response = await this.workspaceApi.getWorkspace(this.id);
+      const state = response.data.state;
+
+      if (state === 'stopped') {
+        return;
+      }
+
+      if (state === 'error') {
+        throw new Error(`Workspace failed to stop with status: ${status}`);
+      }
+
+      await new Promise(resolve => setTimeout(resolve, 100)); // Wait 100 ms between checks
+      attempts++;
+    }
+
+    throw new Error('Workspace failed to become stopped within the timeout period');
+  }
+
+  /**
+   * Get structured information about the workspace
+   * @returns {Promise<WorkspaceInfo>} Structured workspace information
+   */
+  public async info(): Promise<WorkspaceInfo> {
+    const response = await this.workspaceApi.getWorkspace(this.id)
+    const instance = response.data
+    const providerMetadata = JSON.parse(instance.info?.providerMetadata || '{}')
+
+    // Extract resources with defaults
+    const resourcesData = providerMetadata.resources || {}
+    const resources: WorkspaceResources = {
+      cpu: String(resourcesData.cpu || '1'),
+      gpu: resourcesData.gpu ? String(resourcesData.gpu) : null,
+      memory: String(resourcesData.memory || '2Gi'),
+      disk: String(resourcesData.disk || '10Gi')
+    }
+
+    return {
+      id: instance.id,
+      name: instance.name,
+      image: instance.image,
+      user: instance.user,
+      env: instance.env || {},
+      labels: instance.labels || {},
+      public: instance.public || false,
+      target: instance.target,
+      resources,
+      state: providerMetadata.state || '',
+      errorReason: providerMetadata.errorReason || null,
+      snapshotState: providerMetadata.snapshotState || null,
+      snapshotStateCreatedAt: providerMetadata.snapshotStateCreatedAt 
+        ? new Date(providerMetadata.snapshotStateCreatedAt)
+        : null
+    }
   }
 }

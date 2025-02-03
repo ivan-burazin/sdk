@@ -1,4 +1,4 @@
-[Daytona TypeScript SDK - v0.7.0](../README.md) / WorkspaceCodeToolbox
+[Daytona TypeScript SDK - v0.9.0](../README.md) / WorkspaceCodeToolbox
 
 # Interface: WorkspaceCodeToolbox
 
@@ -31,4 +31,4 @@ Generates a command to run the provided code
 
 #### Defined in
 
-[Workspace.ts:15](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Workspace.ts#L15)
+[Workspace.ts:63](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Workspace.ts#L63)

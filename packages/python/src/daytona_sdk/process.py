@@ -14,7 +14,8 @@ from daytona_api_client import (
     Session,
     SessionExecuteRequest,
     SessionExecuteResponse,
-    CreateSessionRequest
+    CreateSessionRequest,
+    Command
 )
 from .code_toolbox.workspace_python_code_toolbox import WorkspacePythonCodeToolbox
 
@@ -84,7 +85,37 @@ class Process:
             create_session_request=request
         )
 
-    def execute_session(self, session_id: str, req: SessionExecuteRequest) -> SessionExecuteResponse:
+    def get_session(self, session_id: str) -> Session:
+        """Gets a session in the workspace.
+        
+        Args:
+            session_id: Unique identifier for the session
+            
+        Returns:
+            Session
+        """
+        return self.toolbox_api.get_session(
+            workspace_id=self.instance.id,
+            session_id=session_id
+        )
+    
+    def get_session_command(self, session_id: str, command_id: str) -> Command:
+        """Gets a command in the session.
+        
+        Args:
+            session_id: Unique identifier for the session
+            command_id: Unique identifier for the command
+            
+        Returns:
+            Command
+        """
+        return self.toolbox_api.get_session_command(
+            workspace_id=self.instance.id,
+            session_id=session_id,
+            command_id=command_id
+        )
+
+    def execute_session_command(self, session_id: str, req: SessionExecuteRequest) -> SessionExecuteResponse:
         """Executes a command in the session.
         
         Args:
@@ -100,7 +131,7 @@ class Process:
             session_execute_request=req
         )
 
-    def get_execute_session_command_logs(self, session_id: str, command_id: str) -> str:
+    def get_session_command_logs(self, session_id: str, command_id: str) -> str:
         """Gets the logs for a command in the session.
         
         Args:

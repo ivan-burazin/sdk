@@ -1,4 +1,4 @@
-[Daytona TypeScript SDK - v0.7.0](../README.md) / Daytona
+[Daytona TypeScript SDK - v0.9.0](../README.md) / Daytona
 
 # Class: Daytona
 
@@ -15,10 +15,11 @@ Main class for interacting with Daytona Server API
 
 - [create](Daytona.md#create)
 - [get](Daytona.md#get)
+- [getCurrentWorkspace](Daytona.md#getcurrentworkspace)
+- [list](Daytona.md#list)
 - [remove](Daytona.md#remove)
 - [start](Daytona.md#start)
 - [stop](Daytona.md#stop)
-- [waitUntilReady](Daytona.md#waituntilready)
 
 ## Constructors
 
@@ -44,7 +45,7 @@ When API key or server URL is missing
 
 #### Defined in
 
-[Daytona.ts:90](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Daytona.ts#L90)
+[Daytona.ts:90](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Daytona.ts#L90)
 
 ## Methods
 
@@ -68,7 +69,7 @@ The created workspace instance
 
 #### Defined in
 
-[Daytona.ts:124](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Daytona.ts#L124)
+[Daytona.ts:124](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Daytona.ts#L124)
 
 ___
 
@@ -92,7 +93,49 @@ The workspace instance
 
 #### Defined in
 
-[Daytona.ts:169](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Daytona.ts#L169)
+[Daytona.ts:169](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Daytona.ts#L169)
+
+___
+
+### getCurrentWorkspace
+
+▸ **getCurrentWorkspace**(`workspaceId`): `Promise`\<[`Workspace`](Workspace.md)\>
+
+Gets the current workspace by ID
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `workspaceId` | `string` | The ID of the workspace to retrieve |
+
+#### Returns
+
+`Promise`\<[`Workspace`](Workspace.md)\>
+
+The workspace instance
+
+#### Defined in
+
+[Daytona.ts:230](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Daytona.ts#L230)
+
+___
+
+### list
+
+▸ **list**(): `Promise`\<[`Workspace`](Workspace.md)[]\>
+
+Lists all workspaces
+
+#### Returns
+
+`Promise`\<[`Workspace`](Workspace.md)[]\>
+
+The list of workspaces
+
+#### Defined in
+
+[Daytona.ts:182](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Daytona.ts#L182)
 
 ___
 
@@ -114,7 +157,7 @@ Removes a workspace
 
 #### Defined in
 
-[Daytona.ts:200](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Daytona.ts#L200)
+[Daytona.ts:221](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Daytona.ts#L221)
 
 ___
 
@@ -136,7 +179,7 @@ Starts a workspace
 
 #### Defined in
 
-[Daytona.ts:182](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Daytona.ts#L182)
+[Daytona.ts:203](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Daytona.ts#L203)
 
 ___
 
@@ -158,24 +201,4 @@ Stops a workspace
 
 #### Defined in
 
-[Daytona.ts:191](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Daytona.ts#L191)
-
-___
-
-### waitUntilReady
-
-▸ **waitUntilReady**(`workspace`): `Promise`\<`void`\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `workspace` | [`Workspace`](Workspace.md) |
-
-#### Returns
-
-`Promise`\<`void`\>
-
-#### Defined in
-
-[Daytona.ts:204](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Daytona.ts#L204)
+[Daytona.ts:212](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Daytona.ts#L212)

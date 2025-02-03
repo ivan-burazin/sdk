@@ -155,7 +155,7 @@ export class Daytona {
     )
 
     if (!params?.async) {
-      await this.waitUntilReady(workspace)
+      await workspace.waitUntilStarted()
     }
 
     return workspace
@@ -176,11 +176,32 @@ export class Daytona {
   }
 
   /**
+   * Lists all workspaces
+   * @returns {Promise<Workspace[]>} The list of workspaces
+   */
+  public async list(): Promise<Workspace[]> {
+    const response = await this.workspaceApi.listWorkspaces()
+    return response.data.map((workspace) => {
+      const language = workspace.labels?.[`code-toolbox-language`] as CodeLanguage
+      if (language && !['python', 'javascript', 'typescript'].includes(language)) {
+        throw new Error(`Invalid code-toolbox-language: ${language}`)
+      }
+      return new Workspace(
+        workspace.id, 
+        workspace, 
+        this.workspaceApi, 
+        this.toolboxApi, 
+        this.getCodeToolbox(language)
+      )
+    })
+  }
+
+  /**
    * Starts a workspace
    * @param {Workspace} workspace - The workspace to start
    */
   public async start(workspace: Workspace) {
-    await this.workspaceApi.startWorkspace(workspace.id)
+    await workspace.start()
   }
 
   /**
@@ -189,7 +210,7 @@ export class Daytona {
    * @returns {Promise<void>}
    */
   public async stop(workspace: Workspace) {
-    await this.workspaceApi.stopWorkspace(workspace.id)
+    await workspace.stop()
   }
 
   /**
@@ -201,27 +222,13 @@ export class Daytona {
     await this.workspaceApi.deleteWorkspace(workspace.id, true)
   }
 
-  public async waitUntilReady(workspace: Workspace) {
-    const maxAttempts = 60; // 5 minutes with 5 second intervals
-    let attempts = 0;
-
-    while (attempts < maxAttempts) {
-      const response = await this.workspaceApi.getWorkspace(workspace.id);
-      const state = response.data.state;
-
-      if (state === 'started') {
-        return;
-      }
-
-      if (state === 'error') {
-        throw new Error(`Workspace failed to start with status: ${status}`);
-      }
-
-      await new Promise(resolve => setTimeout(resolve, 100)); // Wait 100 ms between checks
-      attempts++;
-    }
-
-    throw new Error('Workspace failed to become ready within the timeout period');
+  /**
+   * Gets the current workspace by ID
+   * @param {string} workspaceId - The ID of the workspace to retrieve
+   * @returns {Promise<Workspace>} The workspace instance
+   */
+  public async getCurrentWorkspace(workspaceId: string): Promise<Workspace> {
+    return this.get(workspaceId)
   }
 
   private getCodeToolbox(language?: CodeLanguage) {

@@ -1,4 +1,4 @@
-[Daytona TypeScript SDK - v0.7.0](../README.md) / Process
+[Daytona TypeScript SDK - v0.9.0](../README.md) / Process
 
 # Class: Process
 
@@ -16,10 +16,12 @@ Handles process and code execution within a workspace
 - [codeRun](Process.md#coderun)
 - [createSession](Process.md#createsession)
 - [deleteSession](Process.md#deletesession)
-- [executeSession](Process.md#executesession)
-- [getExecuteSessionCommandLogs](Process.md#getexecutesessioncommandlogs)
+- [executeCommand](Process.md#executecommand)
+- [executeSessionCommand](Process.md#executesessioncommand)
+- [getSession](Process.md#getsession)
+- [getSessionCommand](Process.md#getsessioncommand)
+- [getSessionCommandLogs](Process.md#getsessioncommandlogs)
 - [listSessions](Process.md#listsessions)
-- [processExecuteCommand](Process.md#processexecutecommand)
 
 ## Constructors
 
@@ -41,7 +43,7 @@ Handles process and code execution within a workspace
 
 #### Defined in
 
-[Process.ts:17](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Process.ts#L17)
+[Process.ts:17](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Process.ts#L17)
 
 ## Methods
 
@@ -65,7 +67,7 @@ Code execution results
 
 #### Defined in
 
-[Process.ts:45](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Process.ts#L45)
+[Process.ts:47](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Process.ts#L47)
 
 ___
 
@@ -89,7 +91,7 @@ Code execution results
 
 #### Defined in
 
-[Process.ts:60](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Process.ts#L60)
+[Process.ts:62](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Process.ts#L62)
 
 ___
 
@@ -111,13 +113,39 @@ Deletes a session in the workspace
 
 #### Defined in
 
-[Process.ts:101](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Process.ts#L101)
+[Process.ts:124](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Process.ts#L124)
 
 ___
 
-### executeSession
+### executeCommand
 
-▸ **executeSession**(`sessionId`, `req`): `Promise`\<`SessionExecuteResponse`\>
+▸ **executeCommand**(`command`, `cwd?`, `timeout?`): `Promise`\<`ExecuteResponse`\>
+
+Executes a shell command in the workspace
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `command` | `string` | Command to execute |
+| `cwd?` | `string` | - |
+| `timeout?` | `number` | - |
+
+#### Returns
+
+`Promise`\<`ExecuteResponse`\>
+
+Command execution results
+
+#### Defined in
+
+[Process.ts:28](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Process.ts#L28)
+
+___
+
+### executeSessionCommand
+
+▸ **executeSessionCommand**(`sessionId`, `req`): `Promise`\<`SessionExecuteResponse`\>
 
 Executes a command in the session
 
@@ -136,13 +164,62 @@ Command execution results
 
 #### Defined in
 
-[Process.ts:72](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Process.ts#L72)
+[Process.ts:74](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Process.ts#L74)
 
 ___
 
-### getExecuteSessionCommandLogs
+### getSession
 
-▸ **getExecuteSessionCommandLogs**(`sessionId`, `commandId`): `Promise`\<`string`\>
+▸ **getSession**(`sessionId`): `Promise`\<`Session`\>
+
+Gets the session
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `sessionId` | `string` | Unique identifier for the session |
+
+#### Returns
+
+`Promise`\<`Session`\>
+
+Session
+
+#### Defined in
+
+[Process.ts:95](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Process.ts#L95)
+
+___
+
+### getSessionCommand
+
+▸ **getSessionCommand**(`sessionId`, `commandId`): `Promise`\<`Command`\>
+
+Gets the session command
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `sessionId` | `string` | Unique identifier for the session |
+| `commandId` | `string` | Unique identifier for the command |
+
+#### Returns
+
+`Promise`\<`Command`\>
+
+Session command
+
+#### Defined in
+
+[Process.ts:106](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Process.ts#L106)
+
+___
+
+### getSessionCommandLogs
+
+▸ **getSessionCommandLogs**(`sessionId`, `commandId`): `Promise`\<`string`\>
 
 Gets the logs for a command in the session
 
@@ -161,7 +238,7 @@ Command logs
 
 #### Defined in
 
-[Process.ts:83](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Process.ts#L83)
+[Process.ts:85](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Process.ts#L85)
 
 ___
 
@@ -179,29 +256,4 @@ List of sessions
 
 #### Defined in
 
-[Process.ts:92](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Process.ts#L92)
-
-___
-
-### processExecuteCommand
-
-▸ **processExecuteCommand**(`command`, `timeout?`): `Promise`\<`ExecuteResponse`\>
-
-Executes a shell command in the workspace
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `command` | `string` | Command to execute |
-| `timeout?` | `number` | - |
-
-#### Returns
-
-`Promise`\<`ExecuteResponse`\>
-
-Command execution results
-
-#### Defined in
-
-[Process.ts:28](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Process.ts#L28)
+[Process.ts:115](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Process.ts#L115)

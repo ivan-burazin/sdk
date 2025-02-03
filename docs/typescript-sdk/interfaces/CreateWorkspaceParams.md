@@ -1,4 +1,4 @@
-[Daytona TypeScript SDK - v0.7.0](../README.md) / CreateWorkspaceParams
+[Daytona TypeScript SDK - v0.9.0](../README.md) / CreateWorkspaceParams
 
 # Interface: CreateWorkspaceParams
 
@@ -30,7 +30,7 @@ If true, will not wait for the workspace to be ready before returning
 
 #### Defined in
 
-[Daytona.ts:70](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Daytona.ts#L70)
+[Daytona.ts:70](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Daytona.ts#L70)
 
 ___
 
@@ -42,7 +42,7 @@ Optional environment variables to set in the workspace
 
 #### Defined in
 
-[Daytona.ts:60](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Daytona.ts#L60)
+[Daytona.ts:60](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Daytona.ts#L60)
 
 ___
 
@@ -54,7 +54,7 @@ Optional workspace ID. If not provided, a random ID will be generated
 
 #### Defined in
 
-[Daytona.ts:52](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Daytona.ts#L52)
+[Daytona.ts:52](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Daytona.ts#L52)
 
 ___
 
@@ -66,7 +66,7 @@ Optional Docker image to use for the workspace
 
 #### Defined in
 
-[Daytona.ts:54](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Daytona.ts#L54)
+[Daytona.ts:54](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Daytona.ts#L54)
 
 ___
 
@@ -78,7 +78,7 @@ Workspace labels
 
 #### Defined in
 
-[Daytona.ts:62](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Daytona.ts#L62)
+[Daytona.ts:62](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Daytona.ts#L62)
 
 ___
 
@@ -90,7 +90,7 @@ Programming language for direct code execution
 
 #### Defined in
 
-[Daytona.ts:58](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Daytona.ts#L58)
+[Daytona.ts:58](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Daytona.ts#L58)
 
 ___
 
@@ -102,7 +102,7 @@ Is the workspace port preview public
 
 #### Defined in
 
-[Daytona.ts:64](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Daytona.ts#L64)
+[Daytona.ts:64](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Daytona.ts#L64)
 
 ___
 
@@ -114,7 +114,7 @@ Resource allocation for the workspace
 
 #### Defined in
 
-[Daytona.ts:68](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Daytona.ts#L68)
+[Daytona.ts:68](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Daytona.ts#L68)
 
 ___
 
@@ -126,7 +126,7 @@ Target location for the workspace
 
 #### Defined in
 
-[Daytona.ts:66](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Daytona.ts#L66)
+[Daytona.ts:66](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Daytona.ts#L66)
 
 ___
 
@@ -138,4 +138,4 @@ Optional os user to use for the workspace
 
 #### Defined in
 
-[Daytona.ts:56](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Daytona.ts#L56)
+[Daytona.ts:56](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Daytona.ts#L56)

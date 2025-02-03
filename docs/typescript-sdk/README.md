@@ -1,6 +1,6 @@
 Daytona TypeScript SDK
 
-# Daytona TypeScript SDK - v0.7.0
+# Daytona TypeScript SDK - v0.9.0
 
 ## Table of contents
 

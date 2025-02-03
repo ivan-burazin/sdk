@@ -1,4 +1,4 @@
-[Daytona TypeScript SDK - v0.7.0](../README.md) / Workspace
+[Daytona TypeScript SDK - v0.9.0](../README.md) / Workspace
 
 # Class: Workspace
 
@@ -16,6 +16,7 @@ Represents a Daytona workspace instance with file system, git, and process manag
 - [fs](Workspace.md#fs)
 - [git](Workspace.md#git)
 - [id](Workspace.md#id)
+- [instance](Workspace.md#instance)
 - [process](Workspace.md#process)
 - [toolboxApi](Workspace.md#toolboxapi)
 - [workspaceApi](Workspace.md#workspaceapi)
@@ -23,7 +24,14 @@ Represents a Daytona workspace instance with file system, git, and process manag
 ### Methods
 
 - [createLspServer](Workspace.md#createlspserver)
+- [delete](Workspace.md#delete)
 - [getWorkspaceRootDir](Workspace.md#getworkspacerootdir)
+- [info](Workspace.md#info)
+- [setLabels](Workspace.md#setlabels)
+- [start](Workspace.md#start)
+- [stop](Workspace.md#stop)
+- [waitUntilStarted](Workspace.md#waituntilstarted)
+- [waitUntilStopped](Workspace.md#waituntilstopped)
 
 ## Constructors
 
@@ -49,7 +57,7 @@ Creates a new workspace instance
 
 #### Defined in
 
-[Workspace.ts:39](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Workspace.ts#L39)
+[Workspace.ts:87](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Workspace.ts#L87)
 
 ## Properties
 
@@ -61,7 +69,7 @@ File system operations for the workspace
 
 #### Defined in
 
-[Workspace.ts:24](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Workspace.ts#L24)
+[Workspace.ts:72](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Workspace.ts#L72)
 
 ___
 
@@ -73,7 +81,7 @@ Git operations for the workspace
 
 #### Defined in
 
-[Workspace.ts:26](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Workspace.ts#L26)
+[Workspace.ts:74](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Workspace.ts#L74)
 
 ___
 
@@ -85,7 +93,19 @@ Unique identifier for the workspace
 
 #### Defined in
 
-[Workspace.ts:40](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Workspace.ts#L40)
+[Workspace.ts:88](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Workspace.ts#L88)
+
+___
+
+### instance
+
+• `Readonly` **instance**: `Workspace`
+
+The underlying workspace instance
+
+#### Defined in
+
+[Workspace.ts:89](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Workspace.ts#L89)
 
 ___
 
@@ -97,7 +117,7 @@ Process and code execution operations
 
 #### Defined in
 
-[Workspace.ts:28](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Workspace.ts#L28)
+[Workspace.ts:76](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Workspace.ts#L76)
 
 ___
 
@@ -109,7 +129,7 @@ API client for toolbox operations
 
 #### Defined in
 
-[Workspace.ts:43](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Workspace.ts#L43)
+[Workspace.ts:91](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Workspace.ts#L91)
 
 ___
 
@@ -121,7 +141,7 @@ API client for workspace operations
 
 #### Defined in
 
-[Workspace.ts:42](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Workspace.ts#L42)
+[Workspace.ts:90](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Workspace.ts#L90)
 
 ## Methods
 
@@ -146,7 +166,23 @@ A new LSP server instance
 
 #### Defined in
 
-[Workspace.ts:68](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Workspace.ts#L68)
+[Workspace.ts:116](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Workspace.ts#L116)
+
+___
+
+### delete
+
+▸ **delete**(): `Promise`\<`void`\>
+
+Deletes the workspace
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[Workspace.ts:158](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Workspace.ts#L158)
 
 ___
 
@@ -164,4 +200,104 @@ The absolute path to the workspace root
 
 #### Defined in
 
-[Workspace.ts:55](https://github.com/daytonaio/sdk/blob/ffc8236270880d7442f27c0dd60560911b3c474e/packages/typescript/src/Workspace.ts#L55)
+[Workspace.ts:103](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Workspace.ts#L103)
+
+___
+
+### info
+
+▸ **info**(): `Promise`\<`WorkspaceInfo`\>
+
+Get structured information about the workspace
+
+#### Returns
+
+`Promise`\<`WorkspaceInfo`\>
+
+Structured workspace information
+
+#### Defined in
+
+[Workspace.ts:212](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Workspace.ts#L212)
+
+___
+
+### setLabels
+
+▸ **setLabels**(`labels`): `Promise`\<`void`\>
+
+Sets labels for the workspace
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `labels` | `Record`\<`string`, `string`\> | The labels to set |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[Workspace.ts:132](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Workspace.ts#L132)
+
+___
+
+### start
+
+▸ **start**(): `Promise`\<`void`\>
+
+Starts the workspace
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[Workspace.ts:140](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Workspace.ts#L140)
+
+___
+
+### stop
+
+▸ **stop**(): `Promise`\<`void`\>
+
+Stops the workspace
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[Workspace.ts:149](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Workspace.ts#L149)
+
+___
+
+### waitUntilStarted
+
+▸ **waitUntilStarted**(): `Promise`\<`void`\>
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[Workspace.ts:162](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Workspace.ts#L162)
+
+___
+
+### waitUntilStopped
+
+▸ **waitUntilStopped**(): `Promise`\<`void`\>
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[Workspace.ts:185](https://github.com/daytonaio/sdk/blob/1398af77e9dc731b596a6407c9aac388c5e999a6/packages/typescript/src/Workspace.ts#L185)

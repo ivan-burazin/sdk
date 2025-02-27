@@ -7,6 +7,7 @@ export { FileSystem } from './FileSystem'
 export { Git } from './Git'
 export { Process } from './Process'
 export { LspLanguageId } from './LspServer'
+// export { LspServer } from './LspServer'
 // export type { LspLanguageId, Position } from './LspServer'
 export { DaytonaError } from './errors/DaytonaError'
 

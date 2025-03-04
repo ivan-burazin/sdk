@@ -330,7 +330,7 @@ class Workspace:
             print("Workspace started successfully")
             ```
         """
-        self.workspace_api.start_workspace(self.id, _request_timeout=timeout)
+        self.workspace_api.start_workspace(self.id, _request_timeout=timeout or None)
         self.wait_for_workspace_start()
 
     @intercept_errors(message_prefix="Failed to stop workspace: ")
@@ -353,7 +353,7 @@ class Workspace:
             print("Workspace stopped successfully")
             ```
         """
-        self.workspace_api.stop_workspace(self.id, _request_timeout=timeout)
+        self.workspace_api.stop_workspace(self.id, _request_timeout=timeout or None)
         self.wait_for_workspace_stop()
 
     @intercept_errors(message_prefix="Failure during waiting for workspace to start: ")
@@ -378,7 +378,7 @@ class Workspace:
 
             if state == "error":
                 raise DaytonaError(
-                    f"Workspace {self.id} failed to start with state: {state}")
+                    f"Workspace {self.id} failed to start with state: {state}, error reason: {response.error_reason}")
 
             time.sleep(0.1)  # Wait 100ms between checks
 
@@ -406,7 +406,7 @@ class Workspace:
 
                 if state == "error":
                     raise DaytonaError(
-                        f"Workspace {self.id} failed to stop with status: {state}")
+                        f"Workspace {self.id} failed to stop with status: {state}, error reason: {workspace_check.error_reason}")
             except Exception as e:
                 # If there's a validation error, continue waiting
                 if "validation error" not in str(e):
@@ -499,7 +499,7 @@ class Workspace:
             target=enum_target or instance.target,
             resources=resources,
             state=enum_state or provider_metadata.get('state', ''),
-            error_reason=provider_metadata.get('errorReason'),
+            error_reason=instance.error_reason,
             snapshot_state=provider_metadata.get('snapshotState'),
             snapshot_state_created_at=datetime.fromisoformat(provider_metadata.get(
                 'snapshotStateCreatedAt')) if provider_metadata.get('snapshotStateCreatedAt') else None,

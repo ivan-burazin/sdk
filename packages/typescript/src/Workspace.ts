@@ -293,7 +293,7 @@ export class Workspace {
     const startTime = Date.now();
     await this.workspaceApi.startWorkspace(this.instance.id, { timeout: timeout * 1000 })
     const timeElapsed = Date.now() - startTime;
-    await this.waitUntilStarted(timeout - (timeElapsed / 1000))
+    await this.waitUntilStarted(timeout ? timeout - (timeElapsed / 1000) : 0)
   }
 
   /**
@@ -317,7 +317,7 @@ export class Workspace {
     const startTime = Date.now();
     await this.workspaceApi.stopWorkspace(this.instance.id, { timeout: timeout * 1000 })
     const timeElapsed = Date.now() - startTime;
-    await this.waitUntilStopped(timeout - (timeElapsed / 1000))
+    await this.waitUntilStopped(timeout ? timeout - (timeElapsed / 1000) : 0)
   }
 
   /**
@@ -356,7 +356,7 @@ export class Workspace {
       }
 
       if (state === 'error') {
-        throw new DaytonaError(`Workspace failed to start with status: ${state}`);
+        throw new DaytonaError(`Workspace failed to start with status: ${state}, error reason: ${response.data.errorReason}`);
       }
 
       await new Promise(resolve => setTimeout(resolve, checkInterval));
@@ -393,7 +393,7 @@ export class Workspace {
       }
 
       if (state === 'error') {
-        throw new DaytonaError(`Workspace failed to stop with status: ${state}`);
+        throw new DaytonaError(`Workspace failed to stop with status: ${state}, error reason: ${response.data.errorReason}`);
       }
 
       await new Promise(resolve => setTimeout(resolve, checkInterval));
